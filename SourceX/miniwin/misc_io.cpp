@@ -133,7 +133,7 @@ WINBOOL CloseHandle(HANDLE hObject)
 	                                       // called on returning
 	files.erase(file);
 	try {
-		svcOutputDebugString(file->path.c_str(),200);
+		//svcOutputDebugString(file->path.c_str(),200);
 		std::ofstream filestream(file->path, std::ios::binary | std::ios::trunc);
 		if (filestream.fail())
 			throw std::runtime_error("ofstream");

@@ -142,7 +142,7 @@ void pfile_get_save_path(char *pszBuf, DWORD dwBufSize, DWORD save_num)
 
 #endif	
 	sprintf(path, fmt, save_num);
-	strcat(pszBuf, path);
+	strcpy(pszBuf, path);
 }
 
 void pfile_flush(BOOL is_single_player, DWORD save_num)
