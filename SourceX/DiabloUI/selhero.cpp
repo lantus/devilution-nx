@@ -173,6 +173,8 @@ void selhero_ClassSelector_Select(int value)
 		sprintf(title, "New Multi Player Hero");
 	}
 	memset(heroInfo.name, '\0', sizeof(heroInfo.name));
+	
+	strcpy(heroInfo.name,"Switcher");
 	UiInitList(0, 0, NULL, selhero_Name_Select, selhero_Name_Esc, ENTERNAME_DIALOG, size(ENTERNAME_DIALOG));
 }
 
@@ -236,7 +238,7 @@ BOOL UiSelHeroDialog(
 
 	selhero_SaveCount = 0;
 	fninfo(SelHero_GetHeroInfo);
-
+ 
 	if (selhero_SaveCount) {
 		selhero_List_Init();
 	} else {

@@ -481,15 +481,15 @@ void __fastcall SelHero_DoEnterName(HWND hWnd)
 {
 	char namestr[16]; // [esp+8h] [ebp-10h]
 
-	if (SDlgDialogBoxParam(ghUiInst, "ENTERNAME_DIALOG", (int)hWnd, EntName_WndProc, (int)namestr) == 1) {
+	//if (SDlgDialogBoxParam(ghUiInst, "ENTERNAME_DIALOG", (int)hWnd, EntName_WndProc, (int)namestr) == 1) {
 		namestr[15] = 0;
 		if (SelHero_CreateHero(hWnd, namestr))
 			PostMessageA(hWnd, 0xBD6u, 0, 0);
 		else
 			PostMessageA(hWnd, 0xBD2u, 0, 0);
-	} else {
+	//} else {
 		PostMessageA(hWnd, 0xBD1u, 0, 0);
-	}
+	//}
 }
 
 // ref: 0x1000C0F9

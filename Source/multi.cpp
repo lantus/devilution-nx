@@ -81,10 +81,12 @@ void multi_msg_add(BYTE *pbMsg, BYTE bLen)
 
 void NetSendLoPri(BYTE *pbMsg, BYTE bLen)
 {
+#ifndef SWITCH	
 	if (pbMsg && bLen) {
 		multi_copy_packet(&sgLoPriBuf, pbMsg, bLen);
 		multi_send_packet(pbMsg, bLen);
 	}
+#endif	
 }
 
 void multi_copy_packet(TBuffer *buf, void *packet, BYTE size)
@@ -130,6 +132,7 @@ void NetRecvPlrData(TPkt *pkt)
 
 void NetSendHiPri(BYTE *pbMsg, BYTE bLen)
 {
+#ifndef SWITCH	
 	BYTE *hipri_body;
 	BYTE *lowpri_body;
 	DWORD len;
@@ -152,11 +155,13 @@ void NetSendHiPri(BYTE *pbMsg, BYTE bLen)
 		if (!SNetSendMessage(-2, &pkt.hdr, len))
 			nthread_terminate_game("SNetSendMessage");
 	}
+#endif	
 }
 // 679760: using guessed type int gdwNormalMsgSize;
 
 BYTE *multi_recv_packet(TBuffer *packet, BYTE *body, int *size)
 {
+#ifndef SWITCH	
 	BYTE *src_ptr;
 	size_t chunk_size;
 
@@ -179,6 +184,9 @@ BYTE *multi_recv_packet(TBuffer *packet, BYTE *body, int *size)
 		return body;
 	}
 	return body;
+#else
+	return NULL;
+#endif	
 }
 
 void multi_send_msg_packet(int pmask, BYTE *a2, BYTE len)
@@ -304,6 +312,7 @@ void multi_net_ping()
 
 int multi_handle_delta()
 {
+#ifndef SWITCH	
 	int i, recieved;
 
 	if (gbGameDestroyed) {
@@ -336,7 +345,7 @@ int multi_handle_delta()
 		}
 	}
 	multi_mon_seeds();
-
+#endif
 	return TRUE;
 }
 

@@ -1,3 +1,5 @@
+#include <switch.h>
+
 #include "devilution.h"
 #include "miniwin/ddraw.h"
 #include "stubs.h"
@@ -118,6 +120,7 @@ WINBOOL FindClose(HANDLE hFindFile)
  */
 UINT GetWindowsDirectoryA(LPSTR lpBuffer, UINT uSize)
 {
+#ifndef SWITCH
 	char *name = SDL_GetPrefPath("diasurgical", "devilution");
 	strncpy(lpBuffer, name, uSize);
 	SDL_free(name);
@@ -125,8 +128,11 @@ UINT GetWindowsDirectoryA(LPSTR lpBuffer, UINT uSize)
 	DWORD len = strlen(lpBuffer);
 
 	lpBuffer[len - 1] = '\0';
-
 	return len - 1;
+#else
+	return 0;
+#endif
+	
 }
 
 WINBOOL GetDiskFreeSpaceA(LPCSTR lpRootPathName, LPDWORD lpSectorsPerCluster, LPDWORD lpBytesPerSector,
@@ -144,6 +150,7 @@ WINBOOL GetDiskFreeSpaceA(LPCSTR lpRootPathName, LPDWORD lpSectorsPerCluster, LP
  */
 DWORD GetModuleFileNameA(HMODULE hModule, LPSTR lpFilename, DWORD nSize)
 {
+#ifndef SWITCH	
 	char *name = SDL_GetPrefPath("diasurgical", "devilution");
 	strncpy(lpFilename, name, nSize);
 	SDL_free(name);
@@ -153,6 +160,10 @@ DWORD GetModuleFileNameA(HMODULE hModule, LPSTR lpFilename, DWORD nSize)
 	lpFilename[len - 1] = '\\';
 
 	return len;
+#else
+	strcpy(lpFilename,"");
+	return 0;
+#endif	
 }
 
 WINBOOL GetComputerNameA(LPSTR lpBuffer, LPDWORD nSize)
@@ -198,6 +209,8 @@ BOOL VerQueryValueA(LPCVOID pBlock, LPCSTR lpSubBlock, LPVOID *lplpBuffer, PUINT
 
 DWORD GetCurrentDirectory(DWORD nBufferLength, LPTSTR lpBuffer)
 {
+	
+#ifndef SWITCH	
 	char *base_path = SDL_GetBasePath();
 	if (base_path == NULL) {
 		SDL_Log(SDL_GetError());
@@ -211,8 +224,10 @@ DWORD GetCurrentDirectory(DWORD nBufferLength, LPTSTR lpBuffer)
 	DWORD len = strlen(lpBuffer);
 
 	lpBuffer[len - 1] = '\\';
-
 	return len;
+#else	
+	return 0;
+#endif	
 }
 
 DWORD GetLogicalDriveStringsA(DWORD nBufferLength, LPSTR lpBuffer)
@@ -322,11 +337,12 @@ HWND CreateWindowExA(
     HINSTANCE hInstance,
     LPVOID lpParam)
 {
-	if (SDL_Init(SDL_INIT_EVERYTHING) <= -1) {
+	svcOutputDebugString("sdfsdfsdf",20);
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) <= -1) {
 		SDL_Log(SDL_GetError());
 		return NULL;
 	}
-	atexit(SDL_Quit);
+	 
 
 	int upscale = 1;
 	DvlIntSetting("upscale", &upscale);
@@ -349,14 +365,14 @@ HWND CreateWindowExA(
 		flags |= SDL_WINDOW_INPUT_GRABBED;
 	}
 
-	window = SDL_CreateWindow(lpWindowName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, nWidth, nHeight, flags);
+	window = SDL_CreateWindow(lpWindowName, 0, 0, 1920, 1080, 0);
 	if (window == NULL) {
 		SDL_Log(SDL_GetError());
 	}
 	atexit(FakeWMDestroy);
 
 	if (upscale) {
-		renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+		renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 		if (renderer == NULL) {
 			SDL_Log(SDL_GetError());
 		}
@@ -715,6 +731,7 @@ DWORD GetPrivateProfileStringA(LPCSTR lpAppName, LPCSTR lpKeyName, LPCSTR lpDefa
 
 int MessageBoxA(HWND hWnd, const char *Text, const char *Title, UINT Flags)
 {
+#ifndef SWITCH	
 	Uint32 SDLFlags = 0;
 	if (Flags & DVL_MB_ICONHAND) {
 		SDLFlags |= SDL_MESSAGEBOX_ERROR;
@@ -726,7 +743,7 @@ int MessageBoxA(HWND hWnd, const char *Text, const char *Title, UINT Flags)
 		SDL_Log(SDL_GetError());
 		return -1;
 	}
-
+#endif
 	return 0;
 }
 

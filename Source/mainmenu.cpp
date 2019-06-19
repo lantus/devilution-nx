@@ -1,3 +1,4 @@
+#include <switch.h>
 #include "diablo.h"
 #include "../3rdParty/Storm/Source/storm.h"
 #include "../DiabloUI/diabloui.h"
@@ -22,6 +23,8 @@ void mainmenu_refresh_music()
 
 void __stdcall mainmenu_create_hero(int arg1, int arg2, int arg3, int arg4, char *name_1, char *name_2)
 {
+	svcOutputDebugString("mainmenu_create_hero",20);
+	strcpy(name_2,"Switcher");
 	if (UiValidPlayerName(name_2))
 		pfile_create_save_file(name_1, name_2);
 }
@@ -36,6 +39,7 @@ int __stdcall mainmenu_select_hero_dialog(
     char *cdesc, DWORD cdlen,
     BOOL *multi)
 {
+	svcOutputDebugString("mainmenu_select_hero_dialog",20);
 	BOOL hero_is_created = TRUE;
 	int dlgresult = NEW_GAME;
 	if (gbMaxPlayers == 1) {
@@ -136,7 +140,7 @@ BOOL mainmenu_init_menu(int type)
 		return TRUE;
 
 	music_stop();
-
+	
 	success = StartGame(type != 2, type != 3);
 	if (success)
 		mainmenu_refresh_music();

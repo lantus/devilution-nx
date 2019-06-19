@@ -1,3 +1,4 @@
+#include <switch.h>
 #include "diablo.h"
 #include "../3rdParty/Storm/Source/storm.h"
 
@@ -92,10 +93,15 @@ void ShowProgress(unsigned int uMsg)
 		IncProgress();
 		break;
 	case WM_DIABNEWGAME:
+		svcOutputDebugString("IncProgress",20);
 		IncProgress();
+		svcOutputDebugString("FreeGameMem",20);
 		FreeGameMem();
+		svcOutputDebugString("IncProgress",20);
 		IncProgress();
+		svcOutputDebugString("pfile_remove_temp_files",20);
 		pfile_remove_temp_files();
+		svcOutputDebugString("LoadGameLevel",20);
 		LoadGameLevel(TRUE, 0);
 		IncProgress();
 		break;
@@ -222,10 +228,12 @@ void ShowProgress(unsigned int uMsg)
 	PaletteFadeOut(8);
 	FreeInterface();
 
+
 	saveProc = SetWindowProc(saveProc);
 	/// ASSERT: assert(saveProc == DisableInputWndProc);
-
+#ifndef SWITCH	
 	NetSendCmdLocParam1(TRUE, CMD_PLAYER_JOINLEVEL, plr[myplr].WorldX, plr[myplr].WorldY, plr[myplr].plrlevel);
+#endif	
 	plrmsg_delay(FALSE);
 	ResetPal();
 

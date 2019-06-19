@@ -1,3 +1,4 @@
+#include <switch.h>
 #include <cstdio>
 #include <set>
 #include <string>
@@ -132,16 +133,18 @@ WINBOOL CloseHandle(HANDLE hObject)
 	                                       // called on returning
 	files.erase(file);
 	try {
-		std::ofstream filestream(file->path + ".tmp", std::ios::binary | std::ios::trunc);
+		svcOutputDebugString(file->path.c_str(),200);
+		std::ofstream filestream(file->path, std::ios::binary | std::ios::trunc);
 		if (filestream.fail())
 			throw std::runtime_error("ofstream");
 		filestream.write(file->buf.data(), file->buf.size());
 		if (filestream.fail())
 			throw std::runtime_error("ofstream::write");
 		filestream.close();
-		std::remove(file->path.c_str());
-		if (std::rename((file->path + ".tmp").c_str(), file->path.c_str()))
-			throw std::runtime_error("rename");
+		//std::remove(file->path.c_str());
+		//svcOutputDebugString(file->path.c_str(),200);
+		//if (std::rename((file->path + ".tmp").c_str(), file->path.c_str()))
+		//	throw std::runtime_error("rename");
 		return true;
 	} catch (std::runtime_error e) {
 		// log

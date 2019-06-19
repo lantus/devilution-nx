@@ -1,3 +1,4 @@
+#include <switch.h>
 #include "diablo.h"
 #include "../3rdParty/Storm/Source/storm.h"
 #include "../DiabloUI/diabloui.h"
@@ -141,10 +142,11 @@ void init_disable_screensaver(BOOLEAN disable)
 
 void init_create_window(int nCmdShow)
 {
+#ifndef SWITCH	
 	int nWidth, nHeight;
 	HWND hWnd;
 	WNDCLASSEXA wcex;
-
+	
 	init_kill_mom_parent();
 	pfile_init_save_directory();
 	memset(&wcex, 0, sizeof(wcex));
@@ -168,11 +170,23 @@ void init_create_window(int nCmdShow)
 		nHeight = 480;
 	else
 		nHeight = GetSystemMetrics(SM_CYSCREEN);
+#else
+	int nWidth, nHeight;
+HWND hWnd;
+	WNDCLASSEXA wcex;
+	nWidth = 640;
+	nHeight = 480;
+#endif	
+	svcOutputDebugString("about to create window",20);
 	hWnd = CreateWindowEx(0, "DIABLO", "DIABLO", WS_POPUP, 0, 0, nWidth, nHeight, NULL, NULL, ghInst, NULL);
+	svcOutputDebugString("CreateWindowEx",20);
 	if (!hWnd)
 		app_fatal("Unable to create main window");
 	ShowWindow(hWnd, SW_SHOWNORMAL); // nCmdShow used only in beta: ShowWindow(hWnd, nCmdShow)
+	
+	svcOutputDebugString("ShowWindow",20);
 	UpdateWindow(hWnd);
+	svcOutputDebugString("UpdateWindow",20);
 	init_await_mom_parent_exit();
 	dx_init(hWnd);
 	BlackPalette();
@@ -262,6 +276,8 @@ HANDLE init_test_access(char *mpq_path, char *mpq_name, char *reg_loc, int flags
 	char archive_path[MAX_PATH];
 	HANDLE archive;
 
+	
+#ifndef SWITCH	
 	if (!GetCurrentDirectory(sizeof(Buffer), Buffer))
 		app_fatal("Can't get program path");
 	init_strip_trailing_slash(Buffer);
@@ -273,8 +289,10 @@ HANDLE init_test_access(char *mpq_path, char *mpq_name, char *reg_loc, int flags
 	if (last_slash_pos)
 		*last_slash_pos = '\0';
 	init_strip_trailing_slash(Filename);
+#endif
 	strcpy(mpq_path, Buffer);
 	strcat(mpq_path, mpq_name);
+		 
 #ifdef COPYPROT
 	if (SFileOpenArchive(mpq_path, flags, fs, &archive))
 #else

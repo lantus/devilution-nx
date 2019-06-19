@@ -1,3 +1,4 @@
+#include <switch.h>
 #include "diablo.h"
 #include "../3rdParty/Storm/Source/storm.h"
 
@@ -11,9 +12,11 @@ void play_movie(char *pszMovie, BOOL user_can_close)
 	WNDPROC saveProc;
 	HANDLE video_stream;
 
+#ifndef SWITCH	
 	if (!gbActive) {
 		return;
 	}
+#endif
 
 	saveProc = SetWindowProc(MovieWndProc);
 	InvalidateRect(ghMainWnd, 0, 0);
@@ -23,6 +26,7 @@ void play_movie(char *pszMovie, BOOL user_can_close)
 	sfx_stop();
 	effects_play_sound("Sfx\\Misc\\blank.wav");
 
+	svcOutputDebugString(pszMovie,20);
 	SVidPlayBegin(pszMovie, 0, 0, 0, 0, loop_movie ? 0x100C0808 : 0x10280808, &video_stream);
 	if (video_stream) {
 		MSG Msg;

@@ -1,3 +1,4 @@
+#include <switch.h>
 #include "diablo.h"
 #include "../3rdParty/Storm/Source/storm.h"
 #include "../DiabloUI/diabloui.h"
@@ -93,18 +94,21 @@ BOOL StartGame(BOOL bNewGame, BOOL bSinglePlayer)
 	do {
 		fExitProgram = FALSE;
 		gbLoadGame = FALSE;
-
+ 	
 		if (!NetInit(bSinglePlayer, &fExitProgram)) {
 			gbRunGameResult = !fExitProgram;
 			break;
-		}
-
+		} 
 		byte_678640 = 0;
 
 		if (bNewGame || !gbValidSaveFile) {
+			svcOutputDebugString("InitLevels",20);
 			InitLevels();
+			svcOutputDebugString("InitQuests",20);
 			InitQuests();
+			svcOutputDebugString("InitPortals",20);
 			InitPortals();
+			svcOutputDebugString("InitDungMsgs",20);
 			InitDungMsgs(myplr);
 		}
 		if (!gbValidSaveFile || !gbLoadGame)
@@ -112,8 +116,12 @@ BOOL StartGame(BOOL bNewGame, BOOL bSinglePlayer)
 		else
 			uMsg = WM_DIABLOADGAME;
 
+		svcOutputDebugString("run_game_loop",20);
 		run_game_loop(uMsg);
+#ifndef SWITCH		
 		NetClose();
+#endif		
+		svcOutputDebugString("***pfile_create_player_description",20);
 		pfile_create_player_description(0, 0);
 	} while (gbRunGameResult);
 
@@ -127,12 +135,14 @@ void run_game_loop(unsigned int uMsg)
 	BOOL bLoop;
 	WNDPROC saveProc;
 	MSG msg;
-
+	
 	nthread_ignore_mutex(TRUE);
 	start_game(uMsg);
 	/// ASSERT: assert(ghMainWnd);
 	saveProc = SetWindowProc(GM_Game);
+	svcOutputDebugString("control_update_life_mana",20);
 	control_update_life_mana();
+	svcOutputDebugString("msg_process_net_packets",20);
 	msg_process_net_packets();
 	gbRunGame = TRUE;
 	gbProcessPlayers = TRUE;
@@ -168,10 +178,12 @@ void run_game_loop(unsigned int uMsg)
 #endif
 			continue;
 		}
-		multi_process_network_packets();
+		//svcOutputDebugString("multi_process_network_packets",20);
+		//multi_process_network_packets();		 
 		game_loop(gbGameLoopStartup);
-		msgcmd_send_chat();
-		gbGameLoopStartup = FALSE;
+		//svcOutputDebugString("msgcmd_send_chat",20);
+		//msgcmd_send_chat();
+		gbGameLoopStartup = FALSE;		 
 		DrawAndBlit();
 	}
 
@@ -258,28 +270,26 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 #endif
 	ghInst = hInst;
 
-	if (RestrictedTest())
-		ErrOkDlg(IDD_DIALOG10, 0, "C:\\Src\\Diablo\\Source\\DIABLO.CPP", 877);
-	if (ReadOnlyTest()) {
-		if (!GetModuleFileName(ghInst, szFileName, sizeof(szFileName)))
-			szFileName[0] = '\0';
-		DirErrorDlg(szFileName);
-	}
-
-	ShowCursor(FALSE);
+ 
+	 
 	srand(GetTickCount());
 	InitHash();
 	fault_get_filter();
 
-	bNoEvent = diablo_get_not_running();
-	if (!diablo_find_window("DIABLO") && bNoEvent) {
+ 
+ 
+		svcOutputDebugString("starting",20);
 #ifdef _DEBUG
 		SFileEnableDirectAccess(TRUE);
 #endif
 		diablo_init_screen();
+		svcOutputDebugString("2 starting",20);
 		diablo_parse_flags(lpCmdLine);
+		svcOutputDebugString("3 starting",20);
 		init_create_window(nCmdShow);
+		svcOutputDebugString("4 starting",20);
 		sound_init();
+		svcOutputDebugString("5 starting",20); 
 		UiInitialize();
 
 #ifdef _DEBUG
@@ -287,7 +297,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 #endif
 			play_movie("gendata\\logo.smk", TRUE);
 
-		{
+		{			
 			char szValueName[] = "Intro";
 			if (!SRegLoadValue("Diablo", szValueName, 0, &nData))
 				nData = 1;
@@ -308,13 +318,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		mainmenu_loop();
 		UiDestroy();
 		SaveGamma();
+ 
 
-		if (ghMainWnd) {
-			Sleep(300);
-			DestroyWindow(ghMainWnd);
-		}
-	}
-
+	svcOutputDebugString("ending",20);
 	return FALSE;
 }
 
@@ -490,6 +496,7 @@ void diablo_init_screen()
 
 BOOL diablo_find_window(LPCSTR lpClassName)
 {
+#ifndef SWITCH		
 	HWND result; // eax
 	HWND v2;     // esi
 	HWND v3;     // eax
@@ -508,11 +515,13 @@ BOOL diablo_find_window(LPCSTR lpClassName)
 		v4 = v2;
 	SetForegroundWindow(v2);
 	SetFocus(v4);
+#endif	
 	return 1;
 }
 
 void diablo_reload_process(HINSTANCE hInstance)
 {
+#ifndef SWITCH	
 	DWORD dwSize, dwProcessId;
 	BOOL bNoExist;
 	char *s;
@@ -593,6 +602,7 @@ void diablo_reload_process(HINSTANCE hInstance)
 		CloseHandle(hMap);
 		ExitProcess(0);
 	}
+#endif	
 }
 
 BOOL PressEscKey()
@@ -768,7 +778,7 @@ LRESULT CALLBACK GM_Game(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_DIABRETOWN:
 		if (gbMaxPlayers > 1)
 			pfile_write_hero();
-		nthread_ignore_mutex(TRUE);
+		nthread_ignore_mutex(TRUE); 	
 		PaletteFadeOut(8);
 		FreeMonsterSnd();
 		music_stop();

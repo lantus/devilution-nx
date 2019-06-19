@@ -4,21 +4,14 @@ DEVILUTION_BEGIN_NAMESPACE
 
 BOOL SystemSupported()
 {
-	OSVERSIONINFO VersionInformation;
-	BOOL ret = FALSE;
-
-	memset(&VersionInformation, 0, sizeof(VersionInformation));
-	VersionInformation.dwOSVersionInfoSize = sizeof(VersionInformation);
-	if (GetVersionEx(&VersionInformation)
-	    && VersionInformation.dwPlatformId == VER_PLATFORM_WIN32_NT
-	    && VersionInformation.dwMajorVersion >= 5) {
-		ret = TRUE;
-	}
-	return ret;
+	 
+	 
+	return TRUE;
 }
 
 BOOL RestrictedTest()
 {
+#ifndef SWITCH	
 	FILE *f;
 	char Buffer[MAX_PATH];
 	BOOL ret = FALSE;
@@ -34,29 +27,14 @@ BOOL RestrictedTest()
 		}
 	}
 	return ret;
+#else
+	return TRUE;
+#endif	
 }
 
 BOOL ReadOnlyTest()
 {
-	char *c;
-	FILE *f;
-	char Filename[MAX_PATH];
-	BOOL ret = FALSE;
-
-	if (GetModuleFileName(ghInst, Filename, sizeof(Filename))) {
-		c = strrchr(Filename, '\\');
-		if (c) {
-			strcpy(c + 1, "Diablo1ReadOnlyTest.foo");
-			f = fopen(Filename, "wt");
-			if (f) {
-				fclose(f);
-				remove(Filename);
-			} else {
-				ret = TRUE;
-			}
-		}
-	}
-	return ret;
+	 return false;
 }
 
 DEVILUTION_END_NAMESPACE
