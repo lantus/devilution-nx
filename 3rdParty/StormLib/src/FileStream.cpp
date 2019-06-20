@@ -18,6 +18,13 @@
 #include "StormCommon.h"
 #include "FileStream.h"
 
+void Log(char *msg)
+{
+	FILE *f = fopen("debug.txt","a+");
+	fprintf(f,"%s\n",msg);
+	fclose(f);
+}
+
 #ifdef _MSC_VER
 #pragma comment(lib, "wininet.lib")             // Internet functions for HTTP stream
 #pragma warning(disable: 4800)                  // 'BOOL' : forcing value to bool 'true' or 'false' (performance warning)
@@ -185,9 +192,16 @@ static bool BaseFile_Read(
     void * pvBuffer,                        // Pointer to data to be read
     DWORD dwBytesToRead)                    // Number of bytes to read from the file
 {
+	
+	char debug[256];
+	
     ULONGLONG ByteOffset = (pByteOffset != NULL) ? *pByteOffset : pStream->Base.File.FilePos;
     DWORD dwBytesRead = 0;                  // Must be set by platform-specific code
 
+	sprintf(debug,"BaseFile_Read before read ByteOffset = %ld",ByteOffset);
+	Log(debug);
+	 
+	
 #ifdef PLATFORM_WINDOWS
     {
         // Note: StormLib no longer supports Windows 9x.
@@ -234,6 +248,7 @@ static bool BaseFile_Read(
                 return false;
             }
             
+			
             dwBytesRead = (DWORD)(size_t)bytes_read;
         }
     }
@@ -539,6 +554,10 @@ static bool BaseMap_Read(
 {
     ULONGLONG ByteOffset = (pByteOffset != NULL) ? *pByteOffset : pStream->Base.Map.FilePos;
 
+	char debug[256];
+	sprintf(debug,"BaseMap_Read ByteOffset = %ld",ByteOffset);
+	Log(debug);
+	
     // Do we have to read anything at all?
     if(dwBytesToRead != 0)
     {
@@ -2662,7 +2681,7 @@ bool FileStream_GetBitmap(TFileStream * pStream, void * pvBitmap, DWORD cbBitmap
  * - If the function fails, it reads false and GetLastError() returns an error code different from ERROR_HANDLE_EOF
  */
 bool FileStream_Read(TFileStream * pStream, ULONGLONG * pByteOffset, void * pvBuffer, DWORD dwBytesToRead)
-{
+{	
     assert(pStream->StreamRead != NULL);
     return pStream->StreamRead(pStream, pByteOffset, pvBuffer, dwBytesToRead);
 }
