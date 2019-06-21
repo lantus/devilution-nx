@@ -343,7 +343,8 @@ HWND CreateWindowExA(
 		return NULL;
 	}
 	 
-
+	SDL_JoystickOpen(0);
+	
 	int upscale = 1;
 	DvlIntSetting("upscale", &upscale);
 	DvlIntSetting("fullscreen", &fullscreen);

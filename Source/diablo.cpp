@@ -101,14 +101,10 @@ BOOL StartGame(BOOL bNewGame, BOOL bSinglePlayer)
 		} 
 		byte_678640 = 0;
 
-		if (bNewGame || !gbValidSaveFile) {
-			svcOutputDebugString("InitLevels",20);
-			InitLevels();
-			svcOutputDebugString("InitQuests",20);
-			InitQuests();
-			svcOutputDebugString("InitPortals",20);
-			InitPortals();
-			svcOutputDebugString("InitDungMsgs",20);
+		if (bNewGame || !gbValidSaveFile) {			 
+			InitLevels();			 
+			InitQuests();			 
+			InitPortals();			 
 			InitDungMsgs(myplr);
 		}
 		if (!gbValidSaveFile || !gbLoadGame)
