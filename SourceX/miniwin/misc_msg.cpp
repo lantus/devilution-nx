@@ -9,8 +9,22 @@
  * Windows message handling and keyboard event conversion for SDL.
  */
 
+  
 namespace dvl {
 
+bool conInv = false;
+float leftStickX;
+float leftStickY;
+float rightStickX;
+float rightStickY;
+float leftTrigger;
+float rightTrigger;
+float deadzoneX;
+float deadzoneY;
+
+JoystickPosition pos_left, pos_right;
+
+void PollSwitchStick();
 static std::deque<MSG> message_queue;
 
 static int translate_sdl_key(SDL_Keysym key)
@@ -132,7 +146,7 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 		message_queue.pop_front();
 		return true;
 	}
-
+	
 	SDL_Event e;
 	if (!SDL_PollEvent(&e)) {
 		return false;
@@ -143,53 +157,6 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 	lpMsg->wParam = 0;
 
 	switch (e.type) {
-	case SDL_JOYAXISMOTION:
-
-		if (e.jaxis.axis == 0)
-		{ 
-			if 	(e.jaxis.value < -8000 )			
-				rstick_x +=3;
-			else
-				rstick_x -=3;
-		}
-		if (e.jaxis.axis == 1)
-		{ 
-			if 	(e.jaxis.value < -8000 )			
-				rstick_y +=3;
-			else
-				rstick_y -=3;
-		}
-		
-		lpMsg->message = DVL_WM_MOUSEMOVE;
-		lpMsg->lParam = (rstick_y << 16) | (rstick_x & 0xFFFF);
-		lpMsg->wParam = keystate_for_mouse(0);
-		
-		lastmouseX = rstick_x;
-		lastmouseY = rstick_y;
-		
-	 
-		 
-		break;
-	case SDL_JOYBUTTONUP:
-		break;
-	case SDL_JOYBUTTONDOWN:
-	{		
-		if (e.jbutton.which == 0) {
-			// A
-			if (e.jbutton.button == 0) {
-				
-				int key = DVL_VK_RETURN;
-				lpMsg->message = e.type == SDL_JOYBUTTONDOWN ? DVL_WM_KEYDOWN : DVL_WM_KEYUP;
-				lpMsg->wParam = (DWORD)key;			 
-				lpMsg->lParam = SDLK_RETURN << 16;
-			}
-			if (e.jbutton.button == 1)
-			{
-				PressChar('c');
-			}
-		}
-	}
-	break;
 	case SDL_QUIT:
 		lpMsg->message = DVL_WM_QUIT;
 		break;
@@ -359,5 +326,62 @@ WINBOOL PostMessageA(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 	return true;
 }
+
+void PollSwitchStick()
+{
+	hidScanInput();
+	
+	//Read the joysticks' position
+	hidJoystickRead(&pos_left, CONTROLLER_P1_AUTO, JOYSTICK_LEFT);
+	hidJoystickRead(&pos_right, CONTROLLER_P1_AUTO, JOYSTICK_RIGHT);
+	
+	float normLX = fmaxf(-1, (float)pos_left.dx / 32767);
+	float normLY = fmaxf(-1, (float)pos_left.dy / 32767);
+
+	leftStickX = (abs(normLX) < deadzoneX ? 0 : (abs(normLX) - deadzoneX) * (normLX / abs(normLX)));
+	leftStickY = (abs(normLY) < deadzoneY ? 0 : (abs(normLY) - deadzoneY) * (normLY / abs(normLY)));
+
+	if (deadzoneX > 0)
+		leftStickX *= 1 / (1 - deadzoneX);
+	if (deadzoneY > 0)
+		leftStickY *= 1 / (1 - deadzoneY);
+
+	float normRX = fmaxf(-1, (float)pos_right.dx / 32767);
+	float normRY = fmaxf(-1, (float)pos_right.dy / 32767);
+
+	rightStickX = (abs(normRX) < deadzoneX ? 0 : (abs(normRX) - deadzoneX) * (normRX / abs(normRX)));
+	rightStickY = (abs(normRY) < deadzoneY ? 0 : (abs(normRY) - deadzoneY) * (normRY / abs(normRY)));
+
+	if (deadzoneX > 0)
+		rightStickX *= 1 / (1 - deadzoneX);
+	if (deadzoneY > 0)
+		rightStickY *= 1 / (1 - deadzoneY);
+
+	//leftTrigger = (float)Player1->GetState().Gamepad.bLeftTrigger;
+	//rightTrigger = (float)Player1->GetState().Gamepad.bRightTrigger;
+
+	// right joystick moves cursor
+	if (rightStickX > 0.35 || rightStickY > 0.35 || rightStickX < -0.35 || rightStickY < -0.35) {
+		int x = MouseX;
+		int y = MouseY;
+		if (rightStickX > 0.50)
+			x += 2;
+		else if(rightStickX < -0.50)
+			x -= 2;
+		if (rightStickY > 0.50)
+			y -= 2;
+		else if (rightStickY < -0.50)
+			y += 2;
+		SetCursorPos(x, y);
+	}
+
+	//tticks = GetTickCount();
+	//if (leftTrigger > 0.50) { // [ key (use first health potion in belt)
+	//	useBeltPotion(false);
+	//}
+	//if (rightTrigger > 0.50) { // ] key (use first mana potion in belt)
+	//	useBeltPotion(true);
+	}	
+ 
 
 }

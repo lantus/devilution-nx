@@ -336,8 +336,7 @@ HWND CreateWindowExA(
     HMENU hMenu,
     HINSTANCE hInstance,
     LPVOID lpParam)
-{
-	svcOutputDebugString("sdfsdfsdf",20);
+{	 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) <= -1) {
 		SDL_Log(SDL_GetError());
 		return NULL;

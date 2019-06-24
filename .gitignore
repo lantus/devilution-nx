@@ -421,3 +421,4 @@ DerivedData/
 /libs
 
 # End of https://www.gitignore.io/api/xcode
+exefs/main

@@ -67,6 +67,8 @@ char *spszMsgTbl[4] = {
 };                                                      // weak
 char *spszMsgKeyTbl[4] = { "F9", "F10", "F11", "F12" }; // weak
 
+extern void PollSwitchStick();
+
 void FreeGameMem()
 {
 	music_stop();
@@ -174,6 +176,9 @@ void run_game_loop(unsigned int uMsg)
 #endif
 			continue;
 		}
+		
+		PollSwitchStick();
+		
 		//svcOutputDebugString("multi_process_network_packets",20);
 		//multi_process_network_packets();		 
 		game_loop(gbGameLoopStartup);
@@ -1910,6 +1915,19 @@ void game_logic()
 	CheckQuests();
 	drawpanflag |= 1;
 	pfile_update(FALSE);
+	
+	// JAKE: PLRCTRLS
+	// check for monsters first, then towners or objs.
+	if (pcurs <= 0) { // cursor should be missing
+		if (!checkMonstersNearby(false)) {
+			pcursmonst = -1;
+			checkTownersNearby(false);
+			checkItemsNearby(false);
+		} else {
+			pcursitem = -1;
+		}
+	}
+	keyboardExpension();
 }
 // 525718: using guessed type char cineflag;
 // 52571C: using guessed type int drawpanflag;

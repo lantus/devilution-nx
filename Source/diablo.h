@@ -79,6 +79,9 @@
 #include "trigs.h"
 #include "wave.h"
 #include "render.h" // linked last, likely .s/.asm
+#include "plrctrls.h"
+//#include "joystick.h"
+
 //#ifdef __cplusplus
 //}
 //#endif
