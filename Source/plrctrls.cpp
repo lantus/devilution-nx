@@ -430,15 +430,17 @@ void hotSpellMove(int key)
 		SetCursorPos(x, y);
 }
 // walk in the direction specified
+
+static int count = 0;
 void walkInDir(int dir)
 {
 	if (invflag || spselflag || chrflag) // don't walk if inventory, speedbook or char info windows are open
 		return;
 	ticks = GetTickCount();
-	if (ticks - invmove < 370) {
-		return;
+	if (ticks - count < 240) {
+		Sleep(20);
 	}
-	invmove = ticks;
+	count = ticks;
 	ClrPlrPath(myplr);                   // clear nodes
 	plr[myplr].destAction = ACTION_NONE; // stop attacking, etc.
 	HideCursor();

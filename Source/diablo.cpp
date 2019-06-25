@@ -113,13 +113,13 @@ BOOL StartGame(BOOL bNewGame, BOOL bSinglePlayer)
 			uMsg = WM_DIABNEWGAME;
 		else
 			uMsg = WM_DIABLOADGAME;
-
-		svcOutputDebugString("run_game_loop",20);
+		 
+		inmainmenu = false;
 		run_game_loop(uMsg);
 #ifndef SWITCH		
 		NetClose();
 #endif		
-		svcOutputDebugString("***pfile_create_player_description",20);
+	
 		pfile_create_player_description(0, 0);
 	} while (gbRunGameResult);
 
@@ -175,10 +175,8 @@ void run_game_loop(unsigned int uMsg)
 			Sleep(1);
 #endif
 			continue;
-		}
-		
-		PollSwitchStick();
-		
+		} 
+ 
 		//svcOutputDebugString("multi_process_network_packets",20);
 		//multi_process_network_packets();		 
 		game_loop(gbGameLoopStartup);
@@ -1927,6 +1925,7 @@ void game_logic()
 			pcursitem = -1;
 		}
 	}
+	PollSwitchStick();
 	keyboardExpension();
 }
 // 525718: using guessed type char cineflag;

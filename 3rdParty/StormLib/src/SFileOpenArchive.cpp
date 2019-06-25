@@ -19,8 +19,6 @@
 
 #define HEADER_SEARCH_BUFFER_SIZE   0x1000
 
-extern void Log(char *msg);
-
 /*****************************************************************************/
 /* Local functions                                                           */
 /*****************************************************************************/
@@ -75,14 +73,7 @@ static int VerifyMpqTablePositions(TMPQArchive * ha, ULONGLONG FileSize)
 {
     TMPQHeader * pHeader = ha->pHeader;
     ULONGLONG ByteOffset;
-
-	char debug[256];
-	sprintf(debug,"pHeader->HetTablePos64 = %ld\n",pHeader->HetTablePos64);
-	Log(debug);
-	sprintf(debug,"ha->MpqPos = %ld\n",ha->MpqPos);
-	Log(debug);
-	sprintf(debug,"pHeader->BetTablePos64 = %ld\n",pHeader->BetTablePos64);
-	Log(debug);
+ 
     // Check the begin of HET table
     if(pHeader->HetTablePos64)
     {
@@ -190,8 +181,7 @@ bool STORMAPI SFileOpenArchive(
     char translatedName[260];
     TranslateFileName(translatedName, sizeof(translatedName), szMpqName);
 #endif
-	Log("translatedName =");
-	Log(translatedName);
+ 
     // Open the MPQ archive file
     pStream = FileStream_OpenFile(translatedName, dwStreamFlags);
     if(pStream == NULL)
@@ -267,9 +257,7 @@ bool STORMAPI SFileOpenArchive(
                 nError = GetLastError();
                 break;
             }
-			
-			sprintf(debug,"SearchOffset after FileStream_Read = %ld",SearchOffset);
-			Log(debug);
+ 
 
             // There are AVI files from Warcraft III with 'MPQ' extension.
             if(SearchOffset == 0)
@@ -357,10 +345,7 @@ bool STORMAPI SFileOpenArchive(
 
             // Set the position of the MPQ header
             ha->pHeader  = (TMPQHeader *)ha->HeaderData;
-			
-			
-			sprintf(debug,"SearchOffset at end = %ld",SearchOffset);
-			Log(debug);
+ 
             ha->MpqPos   = SearchOffset;
             ha->FileSize = FileSize;
 

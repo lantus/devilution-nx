@@ -17,13 +17,7 @@
 #include "StormLib.h"
 #include "StormCommon.h"
 #include "FileStream.h"
-
-void Log(char *msg)
-{
-	FILE *f = fopen("debug.txt","a+");
-	fprintf(f,"%s\n",msg);
-	fclose(f);
-}
+ 
 
 #ifdef _MSC_VER
 #pragma comment(lib, "wininet.lib")             // Internet functions for HTTP stream
@@ -197,9 +191,7 @@ static bool BaseFile_Read(
 	
     ULONGLONG ByteOffset = (pByteOffset != NULL) ? *pByteOffset : pStream->Base.File.FilePos;
     DWORD dwBytesRead = 0;                  // Must be set by platform-specific code
-
-	sprintf(debug,"BaseFile_Read before read ByteOffset = %ld",ByteOffset);
-	Log(debug);
+ 
 	 
 	
 #ifdef PLATFORM_WINDOWS
@@ -553,10 +545,7 @@ static bool BaseMap_Read(
     DWORD dwBytesToRead)                    // Number of bytes to read from the file
 {
     ULONGLONG ByteOffset = (pByteOffset != NULL) ? *pByteOffset : pStream->Base.Map.FilePos;
-
-	char debug[256];
-	sprintf(debug,"BaseMap_Read ByteOffset = %ld",ByteOffset);
-	Log(debug);
+ 
 	
     // Do we have to read anything at all?
     if(dwBytesToRead != 0)

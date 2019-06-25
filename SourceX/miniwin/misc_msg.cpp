@@ -123,8 +123,8 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 	static signed short rstick_y;
 	static signed short lstick_y;
 	
-	static short lastmouseX, lastmouseY;
-		
+	static short lastmouseX, lastmouseY;	
+ 
 	if (wMsgFilterMin != 0)
 		UNIMPLEMENTED();
 	if (wMsgFilterMax != 0)
@@ -151,12 +151,27 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 	if (!SDL_PollEvent(&e)) {
 		return false;
 	}
-
+		
 	lpMsg->hwnd = hWnd;
 	lpMsg->lParam = 0;
 	lpMsg->wParam = 0;
 
 	switch (e.type) {
+	case SDL_JOYBUTTONUP:
+	 
+		if (e.jbutton.button == 0) {						
+			 
+		}	
+		break;
+	 
+	case SDL_JOYBUTTONDOWN:
+	 			 	
+		if (e.jbutton.button == 0) {						
+			 
+		}			 
+		 
+	 
+	break;		
 	case SDL_QUIT:
 		lpMsg->message = DVL_WM_QUIT;
 		break;
@@ -334,9 +349,12 @@ void PollSwitchStick()
 	//Read the joysticks' position
 	hidJoystickRead(&pos_left, CONTROLLER_P1_AUTO, JOYSTICK_LEFT);
 	hidJoystickRead(&pos_right, CONTROLLER_P1_AUTO, JOYSTICK_RIGHT);
+	int k = hidKeysDown(CONTROLLER_P1_AUTO);
+    int h = hidKeysHeld(CONTROLLER_P1_AUTO);
+        		
 	
-	float normLX = fmaxf(-1, (float)pos_left.dx / 32767);
-	float normLY = fmaxf(-1, (float)pos_left.dy / 32767);
+	float normLX = fmaxf(-1, (float)pos_left.dx / 8000);
+	float normLY = fmaxf(-1, (float)pos_left.dy / 8000);
 
 	leftStickX = (abs(normLX) < deadzoneX ? 0 : (abs(normLX) - deadzoneX) * (normLX / abs(normLX)));
 	leftStickY = (abs(normLY) < deadzoneY ? 0 : (abs(normLY) - deadzoneY) * (normLY / abs(normLY)));
@@ -346,8 +364,8 @@ void PollSwitchStick()
 	if (deadzoneY > 0)
 		leftStickY *= 1 / (1 - deadzoneY);
 
-	float normRX = fmaxf(-1, (float)pos_right.dx / 32767);
-	float normRY = fmaxf(-1, (float)pos_right.dy / 32767);
+	float normRX = fmaxf(-1, (float)pos_right.dx / 8000);
+	float normRY = fmaxf(-1, (float)pos_right.dy / 8000);
 
 	rightStickX = (abs(normRX) < deadzoneX ? 0 : (abs(normRX) - deadzoneX) * (normRX / abs(normRX)));
 	rightStickY = (abs(normRY) < deadzoneY ? 0 : (abs(normRY) - deadzoneY) * (normRY / abs(normRY)));
@@ -374,7 +392,9 @@ void PollSwitchStick()
 			y += 2;
 		SetCursorPos(x, y);
 	}
-
+ 
+	 
+	
 	//tticks = GetTickCount();
 	//if (leftTrigger > 0.50) { // [ key (use first health potion in belt)
 	//	useBeltPotion(false);
