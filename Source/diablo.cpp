@@ -857,16 +857,16 @@ BOOL LeftMouseCmd(BOOL bShift)
 
 	/// ASSERT: assert(MouseY < VIEWPORT_HEIGHT);
 
-	if (leveltype == DTYPE_TOWN) {
-		if (pcursitem != -1 && pcurs == CURSOR_HAND)
-			NetSendCmdLocParam1(TRUE, invflag ? CMD_GOTOGETITEM : CMD_GOTOAGETITEM, cursmx, cursmy, pcursitem);
+	if (!leveltype) {                                // in town
+		//if (pcursitem != -1 && pcurs <= CURSOR_HAND) // JAKE: allow no cursor as well
+		//	NetSendCmdLocParam1(TRUE, invflag ? CMD_GOTOGETITEM : CMD_GOTOAGETITEM, cursmx, cursmy, pcursitem);
 		if (pcursmonst != -1)
 			NetSendCmdLocParam1(TRUE, CMD_TALKXY, cursmx, cursmy, pcursmonst);
 		if (pcursitem == -1 && pcursmonst == -1 && pcursplr == -1)
 			return TRUE;
-	} else {
+	} else { // in dungeon
 		bNear = abs(plr[myplr].WorldX - cursmx) < 2 && abs(plr[myplr].WorldY - cursmy) < 2;
-		if (pcursitem != -1 && pcurs == CURSOR_HAND && !bShift) {
+		if (pcursitem != -1 && pcurs <= CURSOR_HAND && !bShift) { // JAKE: allow no cursor as well
 			NetSendCmdLocParam1(pcurs, invflag ? CMD_GOTOGETITEM : CMD_GOTOAGETITEM, cursmx, cursmy, pcursitem);
 		} else if (pcursobj != -1 && (!bShift || bNear && object[pcursobj]._oBreak == 1)) {
 			NetSendCmdLocParam1(TRUE, pcurs == CURSOR_DISARM ? CMD_DISARMXY : CMD_OPOBJXY, cursmx, cursmy, pcursobj);
@@ -902,6 +902,7 @@ BOOL LeftMouseCmd(BOOL bShift)
 		if (!bShift && pcursitem == -1 && pcursobj == -1 && pcursmonst == -1 && pcursplr == -1)
 			return TRUE;
 	}
+
 
 	return FALSE;
 }

@@ -157,18 +157,12 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 	lpMsg->wParam = 0;
 
 	switch (e.type) {
-	case SDL_JOYBUTTONUP:
-	 
-		if (e.jbutton.button == 0) {						
-			 
-		}	
-		break;
-	 
+ 
 	case SDL_JOYBUTTONDOWN:
 	 			 	
-		if (e.jbutton.button == 0) {						
-			 
-		}			 
+		 					
+			 LeftMouseCmd(MK_LBUTTON);
+		 		 
 		 
 	 
 	break;		
