@@ -21,6 +21,9 @@ float leftTrigger;
 float rightTrigger;
 float deadzoneX;
 float deadzoneY;
+int doAttack 	= 0;
+int doInv 		= 0;
+int doChar 		= 0;
 
 JoystickPosition pos_left, pos_right;
 
@@ -146,7 +149,7 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 		message_queue.pop_front();
 		return true;
 	}
-	
+ 
 	SDL_Event e;
 	if (!SDL_PollEvent(&e)) {
 		return false;
@@ -156,20 +159,55 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 	lpMsg->lParam = 0;
 	lpMsg->wParam = 0;
 
-	switch (e.type) {
- 
+	switch (e.type) { 
+	case SDL_JOYBUTTONUP: 
+		doAttack = 0;
+		break;
 	case SDL_JOYBUTTONDOWN:
-	 			 	
-		 					
-			 LeftMouseCmd(MK_LBUTTON);
-		 		 
-		 
-	 
-	break;		
+		switch(e.jbutton.button)
+		{
+			case  0:	// A
+				PressChar('i');
+				break;
+			case  1:	// B
+				doAttack = 1;
+				break;
+			case  2:	// X
+				PressChar('x');
+				break;
+			case  3:	// Y
+				PressChar(VK_RETURN);
+				break;
+			case  6:	// L
+				PressChar('h');
+				break;
+			case  7:	// R
+				PressChar('c');
+				break;
+			case  8:	// ZL
+				useBeltPotion(false);
+				break;
+			case  9:	// ZR
+				useBeltPotion(true);
+				break;
+			case 16:
+				PressKey(VK_LEFT);
+				break;
+			case 17:
+				PressKey(VK_UP);
+				break;	
+			case 18:
+				PressKey(VK_RIGHT);
+				break;	
+			case 19:
+				PressKey(VK_DOWN);
+				break;					
+		}
+		break;
 	case SDL_QUIT:
 		lpMsg->message = DVL_WM_QUIT;
 		break;
-	case SDL_KEYDOWN:
+	/*case SDL_KEYDOWN:
 	case SDL_KEYUP: {
 		int key = translate_sdl_key(e.key.keysym);
 		if (key == -1)
@@ -178,7 +216,7 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 		lpMsg->wParam = (DWORD)key;
 		// HACK: Encode modifier in lParam for TranslateMessage later
 		lpMsg->lParam = e.key.keysym.mod << 16;
-	} break;
+	} break;*/
 	case SDL_MOUSEMOTION:
 		lpMsg->message = DVL_WM_MOUSEMOVE;
 		lpMsg->lParam = (e.motion.y << 16) | (e.motion.x & 0xFFFF);
@@ -338,15 +376,13 @@ WINBOOL PostMessageA(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 void PollSwitchStick()
 {
+	int h,k = 0;
 	hidScanInput();
 	
 	//Read the joysticks' position
 	hidJoystickRead(&pos_left, CONTROLLER_P1_AUTO, JOYSTICK_LEFT);
 	hidJoystickRead(&pos_right, CONTROLLER_P1_AUTO, JOYSTICK_RIGHT);
-	int k = hidKeysDown(CONTROLLER_P1_AUTO);
-    int h = hidKeysHeld(CONTROLLER_P1_AUTO);
-        		
-	
+ 
 	float normLX = fmaxf(-1, (float)pos_left.dx / 8000);
 	float normLY = fmaxf(-1, (float)pos_left.dy / 8000);
 
@@ -368,9 +404,7 @@ void PollSwitchStick()
 		rightStickX *= 1 / (1 - deadzoneX);
 	if (deadzoneY > 0)
 		rightStickY *= 1 / (1 - deadzoneY);
-
-	//leftTrigger = (float)Player1->GetState().Gamepad.bLeftTrigger;
-	//rightTrigger = (float)Player1->GetState().Gamepad.bRightTrigger;
+/* 
 
 	// right joystick moves cursor
 	if (rightStickX > 0.35 || rightStickY > 0.35 || rightStickX < -0.35 || rightStickY < -0.35) {
@@ -385,17 +419,49 @@ void PollSwitchStick()
 		else if (rightStickY < -0.50)
 			y += 2;
 		SetCursorPos(x, y);
-	}
- 
-	 
+	}*/
 	
-	//tticks = GetTickCount();
-	//if (leftTrigger > 0.50) { // [ key (use first health potion in belt)
-	//	useBeltPotion(false);
-	//}
-	//if (rightTrigger > 0.50) { // ] key (use first mana potion in belt)
-	//	useBeltPotion(true);
+	
+	
+	/*
+	k = hidKeysDown(CONTROLLER_P1_AUTO);
+   // h = hidKeysHeld(CONTROLLER_P1_AUTO);
+	 
+	if (k & KEY_ZL) { // [ key (use first health potion in belt)
+		useBeltPotion(false);
+	}
+	if (k & KEY_ZR) { // ] key (use first mana potion in belt)
+		useBeltPotion(true);
+	}		
+	if(k & KEY_B)
+    {			
+		doAttack = 1;
+	}
+	if (k & KEY_A)
+	{
+		PressChar('i');
+	}
+	if (k & KEY_X)
+	{
+		PressChar('x');
+	}
+	else if (k & KEY_Y)
+	{
+		PressChar(VK_RETURN);
 	}	
+	else if (k & KEY_R)
+	{
+		PressChar('c');
+	}	
+	else if (k & KEY_L)
+	{
+		PressChar('h');
+	}	
+	if (k & KEY_PLUS)
+	{
+		PressChar(VK_ESCAPE);
+	} */
+	 
  
-
+}
 }
