@@ -92,6 +92,7 @@ void mainmenu_loop()
 	BOOL done;
 	int menu;
 
+	inmainmenu = true; // JAKE: Let the controller know we're in the main menu
 	done = FALSE;
 	mainmenu_refresh_music();
 

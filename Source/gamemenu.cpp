@@ -134,29 +134,31 @@ void gamemenu_load_game(BOOL bActivate)
 
 void gamemenu_save_game(BOOL bActivate)
 {
-	SetCursor_(CURSOR_HAND);
-	
-	if (pcurs != CURSOR_HAND) {
-		return;
-	}
+	if (pcurs <= CURSOR_HAND) {	
+		SetCursor_(CURSOR_HAND);
+		
+		if (pcurs != CURSOR_HAND) {
+			return;
+		}
 
-	if (plr[myplr]._pmode == PM_DEATH || deathflag) {
+		if (plr[myplr]._pmode == PM_DEATH || deathflag) {
+			gamemenu_off();
+			return;
+		}
+
+		WNDPROC saveProc = SetWindowProc(DisableInputWndProc);
+		SetCursor_(CURSOR_NONE);
 		gamemenu_off();
-		return;
+		InitDiabloMsg(EMSG_SAVING);
+		drawpanflag = 255;
+		DrawAndBlit();
+		SaveGame();
+		ClrDiabloMsg();
+		drawpanflag = 255;
+		SetCursor_(CURSOR_HAND);
+		interface_msg_pump();
+		SetWindowProc(saveProc);
 	}
-
-	WNDPROC saveProc = SetWindowProc(DisableInputWndProc);
-	SetCursor_(CURSOR_NONE);
-	gamemenu_off();
-	InitDiabloMsg(EMSG_SAVING);
-	drawpanflag = 255;
-	DrawAndBlit();
-	SaveGame();
-	ClrDiabloMsg();
-	drawpanflag = 255;
-	SetCursor_(CURSOR_HAND);
-	interface_msg_pump();
-	SetWindowProc(saveProc);
 }
 
 void gamemenu_restart_town(BOOL bActivate)

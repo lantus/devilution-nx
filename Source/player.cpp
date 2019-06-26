@@ -1,3 +1,4 @@
+#include <switch.h>
 #include "diablo.h"
 #include "../3rdParty/Storm/Source/storm.h"
 
@@ -3130,6 +3131,8 @@ void CheckNewPath(int pnum)
 			plr[pnum]._pVar4 = plr[pnum].destParam2;
 			break;
 		case ACTION_OPERATE:
+		
+			svcOutputDebugString("ACTION_OPERATE",40);
 			i = plr[pnum].destParam1;
 			x = abs(plr[pnum].WorldX - object[i]._ox);
 			y = abs(plr[pnum].WorldY - object[i]._oy);
@@ -3173,7 +3176,7 @@ void CheckNewPath(int pnum)
 				i = plr[pnum].destParam1;
 				x = abs(plr[pnum].WorldX - item[i]._ix);
 				y = abs(plr[pnum].WorldY - item[i]._iy);
-				if (x <= 1 && y <= 1 && pcurs == 1 && !item[i]._iRequest) {
+				if (x <= 1 && y <= 1 && /*pcurs == 1 &&*/ !item[i]._iRequest) { // JAKE: ignore standard cursor
 					NetSendCmdGItem(TRUE, CMD_REQUESTGITEM, myplr, myplr, i);
 					item[i]._iRequest = TRUE;
 				}
@@ -3184,7 +3187,7 @@ void CheckNewPath(int pnum)
 				i = plr[pnum].destParam1;
 				x = abs(plr[pnum].WorldX - item[i]._ix);
 				y = abs(plr[pnum].WorldY - item[i]._iy);
-				if (x <= 1 && y <= 1 && pcurs == 1) {
+				if (x <= 1 && y <= 1 /*&& pcurs == 1*/) { // JAKE: ignore standard cursor
 					NetSendCmdGItem(TRUE, CMD_REQUESTAGITEM, myplr, myplr, i);
 				}
 			}
@@ -3630,9 +3633,9 @@ void CheckPlrSpell()
 		return;
 	}
 
-	if (pcurs != CURSOR_HAND
-	    || MouseY >= VIEWPORT_HEIGHT
-	    || (chrflag && MouseX < 320 || invflag && MouseX > 320)
+	if (pcurs > CURSOR_HAND
+	    || MouseY >= 352
+	    || (chrflag && MouseX < 320 || invflag && MouseX > 320) // JAKE: Let players without cursors cast too
 	        && rspell != SPL_HEAL
 	        && rspell != SPL_IDENTIFY
 	        && rspell != SPL_REPAIR

@@ -114,7 +114,7 @@ BOOL StartGame(BOOL bNewGame, BOOL bSinglePlayer)
 		else
 			uMsg = WM_DIABLOADGAME;
 		 
-		inmainmenu = false;
+		inmainmenu = false;		 
 		run_game_loop(uMsg);	
 		NetClose();
 	
@@ -176,10 +176,10 @@ void run_game_loop(unsigned int uMsg)
 		} 
  
 		//svcOutputDebugString("multi_process_network_packets",20);
-		//multi_process_network_packets();		 
+		multi_process_network_packets();		 
 		game_loop(gbGameLoopStartup);
 		//svcOutputDebugString("msgcmd_send_chat",20);
-		//msgcmd_send_chat();
+		msgcmd_send_chat();
 		gbGameLoopStartup = FALSE;		 
 		DrawAndBlit();
 	}
@@ -851,9 +851,8 @@ BOOL LeftMouseDown(int wParam)
 
 BOOL LeftMouseCmd(BOOL bShift)
 {
+	char debug[256];
 	BOOL bNear;
-
-	/// ASSERT: assert(MouseY < VIEWPORT_HEIGHT);
 
 	if (!leveltype) {                                // in town
 		if (pcursitem != -1 && pcurs <= CURSOR_HAND) // JAKE: allow no cursor as well
@@ -864,6 +863,8 @@ BOOL LeftMouseCmd(BOOL bShift)
 			return TRUE;
 	} else { // in dungeon
 		bNear = abs(plr[myplr].WorldX - cursmx) < 2 && abs(plr[myplr].WorldY - cursmy) < 2;
+		sprintf(debug, " bNear = %d, pcurs = %d, object[pcursobj]._oBreak = %d, pcursitem = %d",bNear,pcurs, object[pcursobj]._oBreak, pcursitem);
+		svcOutputDebugString(debug,256);
 		if (pcursitem != -1 && pcurs <= CURSOR_HAND && !bShift) { // JAKE: allow no cursor as well
 			NetSendCmdLocParam1(pcurs, invflag ? CMD_GOTOGETITEM : CMD_GOTOAGETITEM, cursmx, cursmy, pcursitem);
 		} else if (pcursobj != -1 && (!bShift || bNear && object[pcursobj]._oBreak == 1)) {
@@ -900,7 +901,6 @@ BOOL LeftMouseCmd(BOOL bShift)
 		if (!bShift && pcursitem == -1 && pcursobj == -1 && pcursmonst == -1 && pcursplr == -1)
 			return TRUE;
 	}
-
 
 	return FALSE;
 }

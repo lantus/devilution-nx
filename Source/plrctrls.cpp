@@ -13,7 +13,7 @@ extern float rightTrigger;
 extern float deadzoneX;
 extern float deadzoneY;
 extern int doAttack;
-extern int doInv;
+extern int doUse;
 extern int doChar;
 
 #define INV_TOP 240;
@@ -82,6 +82,7 @@ void checkItemsNearby(bool interact)
 		if (checkNearbyObjs(object[i]._ox, object[i]._oy, 1).x != -1 && object[i]._oSelFlag > 0 && object[i]._otype > -1 && currlevel) { // make sure we're in the dungeon to scan for objs
 			pcursobj = i;
 			if (interact) {
+				svcOutputDebugString("LeftMouseCmd",20);
 				LeftMouseCmd(false);
 			}
 			return;
@@ -483,6 +484,8 @@ void keyboardExpension()
 	if (GetAsyncKeyState(VK_SHIFT) & 0x8000)
 		return;
 	if (GetAsyncKeyState(VK_SPACE) & 0x8000 || doAttack) { // similar to X button on PS1 ccontroller. Talk to towners, click on inv items, attack.	 
+	
+		svcOutputDebugString("attack",20);
 		if (invflag) {                         // inventory is open
 			if (ticks - clickinvtimer >= 300) {
 				clickinvtimer = ticks;
@@ -519,16 +522,20 @@ void keyboardExpension()
 				}
 			}
 		}
-	 doAttack = 0;
+	 
 		
-	} else if (GetAsyncKeyState(VK_RETURN) & 0x8000 || doAttack) { // similar to [] button on PS1 controller. Open chests, doors, pickup items
+	} else if (GetAsyncKeyState(VK_RETURN) & 0x8000 || doUse) { // similar to [] button on PS1 controller. Open chests, doors, pickup items
+		
+		
 		if (!invflag) {
+			
 			HideCursor();
 			if (ticks - opentimer > 300) {
+				svcOutputDebugString("open chest",20);
 				opentimer = ticks;
 				checkItemsNearby(true);
 			}
-		}
+		}				
 	} else if (GetAsyncKeyState(0x58) & 0x8000) { // x key, similar to /\ button on PS1 controller. Cast spell or use skill.
 
 	} else if (GetAsyncKeyState(VK_RIGHT) & 0x8000 && GetAsyncKeyState(VK_DOWN) & 0x8000 || GetAsyncKeyState(0x44) & 0x8000 && GetAsyncKeyState(0x53) & 0x8000 || leftStickY <= -0.40 && leftStickX >= 0.40) {
