@@ -115,10 +115,8 @@ BOOL StartGame(BOOL bNewGame, BOOL bSinglePlayer)
 			uMsg = WM_DIABLOADGAME;
 		 
 		inmainmenu = false;
-		run_game_loop(uMsg);
-#ifndef SWITCH		
+		run_game_loop(uMsg);	
 		NetClose();
-#endif		
 	
 		pfile_create_player_description(0, 0);
 	} while (gbRunGameResult);
@@ -858,8 +856,8 @@ BOOL LeftMouseCmd(BOOL bShift)
 	/// ASSERT: assert(MouseY < VIEWPORT_HEIGHT);
 
 	if (!leveltype) {                                // in town
-		//if (pcursitem != -1 && pcurs <= CURSOR_HAND) // JAKE: allow no cursor as well
-		//	NetSendCmdLocParam1(TRUE, invflag ? CMD_GOTOGETITEM : CMD_GOTOAGETITEM, cursmx, cursmy, pcursitem);
+		if (pcursitem != -1 && pcurs <= CURSOR_HAND) // JAKE: allow no cursor as well
+			NetSendCmdLocParam1(TRUE, invflag ? CMD_GOTOGETITEM : CMD_GOTOAGETITEM, cursmx, cursmy, pcursitem);
 		if (pcursmonst != -1)
 			NetSendCmdLocParam1(TRUE, CMD_TALKXY, cursmx, cursmy, pcursmonst);
 		if (pcursitem == -1 && pcursmonst == -1 && pcursplr == -1)
@@ -1641,7 +1639,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 		glSeedTbl[currlevel] = setseed;
 
 	music_stop();
-	SetCursor_(CURSOR_HAND);
+	//SetCursor_(CURSOR_HAND);
 	SetRndSeed(glSeedTbl[currlevel]);
 	IncProgress();
 	MakeLightTable();
@@ -1925,8 +1923,7 @@ void game_logic()
 		} else {
 			pcursitem = -1;
 		}
-	}
-	PollSwitchStick();
+	}	
 	keyboardExpension();
 }
 // 525718: using guessed type char cineflag;

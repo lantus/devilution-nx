@@ -154,12 +154,17 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 	if (!SDL_PollEvent(&e)) {
 		return false;
 	}
-		
+ 
 	lpMsg->hwnd = hWnd;
 	lpMsg->lParam = 0;
 	lpMsg->wParam = 0;
 
 	switch (e.type) { 
+	case SDL_JOYAXISMOTION:
+		PollSwitchStick();
+		lpMsg->message = e.type == SDL_KEYUP;
+		lpMsg->lParam = 0;
+		break;
 	case SDL_JOYBUTTONUP: 
 		doAttack = 0;
 		break;
@@ -176,7 +181,8 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 				PressChar('x');
 				break;
 			case  3:	// Y
-				PressChar(VK_RETURN);
+				doAttack = 1;
+				PressKey(VK_RETURN);
 				break;
 			case  6:	// L
 				PressChar('h');
@@ -190,6 +196,11 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 			case  9:	// ZR
 				useBeltPotion(true);
 				break;
+			case 10:
+				break;						
+			case 11:
+				PressKey(VK_ESCAPE);
+				break;								
 			case 16:
 				PressKey(VK_LEFT);
 				break;

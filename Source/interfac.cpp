@@ -231,9 +231,9 @@ void ShowProgress(unsigned int uMsg)
 
 	saveProc = SetWindowProc(saveProc);
 	/// ASSERT: assert(saveProc == DisableInputWndProc);
-#ifndef SWITCH	
+ 
 	NetSendCmdLocParam1(TRUE, CMD_PLAYER_JOINLEVEL, plr[myplr].WorldX, plr[myplr].WorldY, plr[myplr].plrlevel);
-#endif	
+ 	
 	plrmsg_delay(FALSE);
 	ResetPal();
 

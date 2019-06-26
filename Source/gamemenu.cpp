@@ -134,6 +134,8 @@ void gamemenu_load_game(BOOL bActivate)
 
 void gamemenu_save_game(BOOL bActivate)
 {
+	SetCursor_(CURSOR_HAND);
+	
 	if (pcurs != CURSOR_HAND) {
 		return;
 	}
