@@ -166,20 +166,22 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 		lpMsg->lParam = 0;
 		break;
 	case SDL_JOYBUTTONUP: 
-		doAttack = 0;
-		doUse = 0;
+		//doAttack = 0;
+		//doUse = 0;
 		break;
 	case SDL_JOYBUTTONDOWN:
 		switch(e.jbutton.button)
 		{
 			case  0:	// A
-				PressChar('i');
+				doAttack = 1;
+				doUse = 1;				
 				break;
 			case  1:	// B
 				doAttack = 1;
+				doUse = 1;
 				break;
 			case  2:	// X
-				PressChar('x');
+				PressChar('i');
 				break;
 			case  3:	// Y
 				doUse = 1;
@@ -395,8 +397,8 @@ void PollSwitchStick()
 	hidJoystickRead(&pos_left, CONTROLLER_P1_AUTO, JOYSTICK_LEFT);
 	hidJoystickRead(&pos_right, CONTROLLER_P1_AUTO, JOYSTICK_RIGHT);
  
-	float normLX = fmaxf(-1, (float)pos_left.dx / 8000);
-	float normLY = fmaxf(-1, (float)pos_left.dy / 8000);
+	float normLX = fmaxf(-1, (float)pos_left.dx / 4000);
+	float normLY = fmaxf(-1, (float)pos_left.dy / 4000);
 
 	leftStickX = (abs(normLX) < deadzoneX ? 0 : (abs(normLX) - deadzoneX) * (normLX / abs(normLX)));
 	leftStickY = (abs(normLY) < deadzoneY ? 0 : (abs(normLY) - deadzoneY) * (normLY / abs(normLY)));
@@ -406,8 +408,9 @@ void PollSwitchStick()
 	if (deadzoneY > 0)
 		leftStickY *= 1 / (1 - deadzoneY);
 
-	float normRX = fmaxf(-1, (float)pos_right.dx / 8000);
-	float normRY = fmaxf(-1, (float)pos_right.dy / 8000);
+/*
+	float normRX = fmaxf(-1, (float)pos_right.dx / 4000);
+	float normRY = fmaxf(-1, (float)pos_right.dy / 4000);
 
 	rightStickX = (abs(normRX) < deadzoneX ? 0 : (abs(normRX) - deadzoneX) * (normRX / abs(normRX)));
 	rightStickY = (abs(normRY) < deadzoneY ? 0 : (abs(normRY) - deadzoneY) * (normRY / abs(normRY)));
@@ -416,7 +419,7 @@ void PollSwitchStick()
 		rightStickX *= 1 / (1 - deadzoneX);
 	if (deadzoneY > 0)
 		rightStickY *= 1 / (1 - deadzoneY);
-/* 
+ 
 
 	// right joystick moves cursor
 	if (rightStickX > 0.35 || rightStickY > 0.35 || rightStickX < -0.35 || rightStickY < -0.35) {
@@ -431,49 +434,8 @@ void PollSwitchStick()
 		else if (rightStickY < -0.50)
 			y += 2;
 		SetCursorPos(x, y);
-	}*/
+	} 
 	
-	
-	
-	/*
-	k = hidKeysDown(CONTROLLER_P1_AUTO);
-   // h = hidKeysHeld(CONTROLLER_P1_AUTO);
-	 
-	if (k & KEY_ZL) { // [ key (use first health potion in belt)
-		useBeltPotion(false);
-	}
-	if (k & KEY_ZR) { // ] key (use first mana potion in belt)
-		useBeltPotion(true);
-	}		
-	if(k & KEY_B)
-    {			
-		doAttack = 1;
-	}
-	if (k & KEY_A)
-	{
-		PressChar('i');
-	}
-	if (k & KEY_X)
-	{
-		PressChar('x');
-	}
-	else if (k & KEY_Y)
-	{
-		PressChar(VK_RETURN);
-	}	
-	else if (k & KEY_R)
-	{
-		PressChar('c');
-	}	
-	else if (k & KEY_L)
-	{
-		PressChar('h');
-	}	
-	if (k & KEY_PLUS)
-	{
-		PressChar(VK_ESCAPE);
-	} */
-	 
- 
+*/	 
 }
 }

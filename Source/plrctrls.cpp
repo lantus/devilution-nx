@@ -65,10 +65,10 @@ void checkItemsNearby(bool interact)
 			if (dItem[item[i]._ix][item[i]._iy] <= 0)
 				continue;
 			if (interact) {
-				sprintf(tempstr, "FOUND NEARBY ITEM AT X:%i Y:%i SEL:%i", item[i]._ix, item[i]._iy, item[i]._iSelFlag);
-				svcOutputDebugString(tempstr,100);
+				//sprintf(tempstr, "FOUND NEARBY ITEM AT X:%i Y:%i SEL:%i", item[i]._ix, item[i]._iy, item[i]._iSelFlag);
+				//svcOutputDebugString(tempstr,100);
 				//NetSendCmdString(1 << myplr, tempstr);
-				SetCursorPos(item[i]._ix, item[i]._iy);
+				//SetCursorPos(item[i]._ix, item[i]._iy);
 				LeftMouseCmd(false);
 			}
 			return; // item nearby, don't find objects
@@ -76,13 +76,11 @@ void checkItemsNearby(bool interact)
 	}
 	if (newCurHidden)
 		pcursitem = -1;
-	//sprintf(tempstr, "SCANNING FOR OBJECTS");
-	//NetSendCmdString(1 << myplr, tempstr);
+	
 	for (int i = 0; i < MAXOBJECTS; i++) {
 		if (checkNearbyObjs(object[i]._ox, object[i]._oy, 1).x != -1 && object[i]._oSelFlag > 0 && object[i]._otype > -1 && currlevel) { // make sure we're in the dungeon to scan for objs
 			pcursobj = i;
-			if (interact) {
-				svcOutputDebugString("LeftMouseCmd",20);
+			if (interact) {				 
 				LeftMouseCmd(false);
 			}
 			return;
@@ -136,9 +134,7 @@ bool checkMonstersNearby(bool attack)
 		return false;
 	}
 	if (attack) {
-		
-		svcOutputDebugString("attacking?",30);
-		
+	 	
 		if (ticks - attacktick > 100) { // prevent accidental double attacks
 			attacktick = ticks;
 			LeftMouseCmd(false);
@@ -483,9 +479,7 @@ void keyboardExpension()
 		return;
 	if (GetAsyncKeyState(VK_SHIFT) & 0x8000)
 		return;
-	if (GetAsyncKeyState(VK_SPACE) & 0x8000 || doAttack) { // similar to X button on PS1 ccontroller. Talk to towners, click on inv items, attack.	 
-	
-		svcOutputDebugString("attack",20);
+	if (GetAsyncKeyState(VK_SPACE) & 0x8000 || doAttack) { // similar to X button on PS1 ccontroller. Talk to towners, click on inv items, attack.	 			
 		if (invflag) {                         // inventory is open
 			if (ticks - clickinvtimer >= 300) {
 				clickinvtimer = ticks;
@@ -523,28 +517,29 @@ void keyboardExpension()
 			}
 		}
 	 
-		
+	doAttack = 0;
+	
 	} else if (GetAsyncKeyState(VK_RETURN) & 0x8000 || doUse) { // similar to [] button on PS1 controller. Open chests, doors, pickup items
-		
-		
-		if (!invflag) {
 			
+		if (!invflag) {			
 			HideCursor();
-			if (ticks - opentimer > 300) {
-				svcOutputDebugString("open chest",20);
+			if (ticks - opentimer > 1500) {				 
 				opentimer = ticks;
 				checkItemsNearby(true);
 			}
-		}				
+		}		
+		
+		doUse = 0;
+		
 	} else if (GetAsyncKeyState(0x58) & 0x8000) { // x key, similar to /\ button on PS1 controller. Cast spell or use skill.
 
-	} else if (GetAsyncKeyState(VK_RIGHT) & 0x8000 && GetAsyncKeyState(VK_DOWN) & 0x8000 || GetAsyncKeyState(0x44) & 0x8000 && GetAsyncKeyState(0x53) & 0x8000 || leftStickY <= -0.40 && leftStickX >= 0.40) {
+	} else if (GetAsyncKeyState(VK_RIGHT) & 0x8000 && GetAsyncKeyState(VK_DOWN) & 0x8000 || GetAsyncKeyState(0x44) & 0x8000 && GetAsyncKeyState(0x53) & 0x8000 || leftStickY <= -0.20 && leftStickX >= 0.20) {
 		walkInDir(WALK_SE);
-	} else if (GetAsyncKeyState(VK_RIGHT) & 0x8000 && GetAsyncKeyState(VK_UP) & 0x8000 || GetAsyncKeyState(0x57) & 0x8000 && GetAsyncKeyState(0x44) & 0x8000 || leftStickY >= 0.40 && leftStickX >= 0.40) {
+	} else if (GetAsyncKeyState(VK_RIGHT) & 0x8000 && GetAsyncKeyState(VK_UP) & 0x8000 || GetAsyncKeyState(0x57) & 0x8000 && GetAsyncKeyState(0x44) & 0x8000 || leftStickY >= 0.20 && leftStickX >= 0.20) {
 		walkInDir(WALK_NE);
-	} else if (GetAsyncKeyState(VK_LEFT) & 0x8000 && GetAsyncKeyState(VK_DOWN) & 0x8000 || GetAsyncKeyState(0x41) & 0x8000 && GetAsyncKeyState(0x53) & 0x8000 || leftStickY <= -0.40 && leftStickX <= -0.40) {
+	} else if (GetAsyncKeyState(VK_LEFT) & 0x8000 && GetAsyncKeyState(VK_DOWN) & 0x8000 || GetAsyncKeyState(0x41) & 0x8000 && GetAsyncKeyState(0x53) & 0x8000 || leftStickY <= -0.20 && leftStickX <= -0.20) {
 		walkInDir(WALK_SW);
-	} else if (GetAsyncKeyState(VK_LEFT) & 0x8000 && GetAsyncKeyState(VK_UP) & 0x8000 || GetAsyncKeyState(0x57) & 0x8000 && GetAsyncKeyState(0x41) & 0x8000 || leftStickY >= 0.40 && leftStickX <= -0.40) {
+	} else if (GetAsyncKeyState(VK_LEFT) & 0x8000 && GetAsyncKeyState(VK_UP) & 0x8000 || GetAsyncKeyState(0x57) & 0x8000 && GetAsyncKeyState(0x41) & 0x8000 || leftStickY >= 0.20 && leftStickX <= -0.20) {
 		walkInDir(WALK_NW);
 	} else if (GetAsyncKeyState(VK_UP) & 0x8000 || GetAsyncKeyState(0x57) & 0x8000 || leftStickY >= 1) {
 		invMove(VK_UP);

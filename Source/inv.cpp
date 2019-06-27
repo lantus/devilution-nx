@@ -2095,8 +2095,10 @@ BOOL UseInvItem(int pnum, int cii)
 	if (plr[pnum]._pInvincible && !plr[pnum]._pHitPoints && pnum == myplr)
 		return TRUE;
 
-	if (pcurs != 1 || stextflag)
-		return TRUE;
+	if (pcurs != 1 && !stextflag)
+	{
+	 
+
 
 	if (cii <= 5)
 		return FALSE;
@@ -2179,6 +2181,7 @@ BOOL UseInvItem(int pnum, int cii)
 			RemoveInvItem(pnum, c);
 		}
 		break;
+	}
 	}
 
 	return TRUE;

@@ -3130,9 +3130,7 @@ void CheckNewPath(int pnum)
 			StartSpell(pnum, d, plr[i]._px, plr[i]._py);
 			plr[pnum]._pVar4 = plr[pnum].destParam2;
 			break;
-		case ACTION_OPERATE:
-		
-			svcOutputDebugString("ACTION_OPERATE",40);
+		case ACTION_OPERATE:					
 			i = plr[pnum].destParam1;
 			x = abs(plr[pnum].WorldX - object[i]._ox);
 			y = abs(plr[pnum].WorldY - object[i]._oy);
