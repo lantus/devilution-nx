@@ -1,49 +1,31 @@
 # Nintendo Switch Port of DevilutionX (Diablo)
 
-
+![alt text](https://i.imgur.com/DKVB198.png)
 
 ### How To Play:
-- Copy diablo-nx.nro, 
+- Extract contents of diablo-nx.zip release into SDMC:\switch\diablo-nx
+- Copy DIABDAT.MPQ from original Diablo game disc or GOG version.
+- Launch diablo-nx.nro
+- Enjoy :)
 
-### Compiling
+### Controls
 
-```
-mkdir build
-cd build
-cmake -DASAN=OFF -DCMAKE_TOOLCHAIN_FILE=../CMake/mingwcc.cmake ..
-make -j$(nproc)
-```
-</details>
-<details><summary>Windows via Visual Studio</summary>
-
-### Installing dependencies
-Make sure to install the `C++ CMake tools for Windows` component for Visual Studio.
-
-Download and place the 32bit MSVC Development Libraries of [SDL2](https://www.libsdl.org/download-2.0.php), [SDL2_mixer](https://www.libsdl.org/projects/SDL_mixer/), [SDL2_ttf](https://www.libsdl.org/projects/SDL_ttf/) and [Libsodium](https://github.com/jedisct1/libsodium/releases) in `%USERPROFILE%\AppData\Local\Microsoft\WindowsApps\`.
-
-Go to `File -> Open -> CMake`, select `CMakeLists` from the project root.
-### Compiling
-Select `Build devilution.exe` from the `Build` menu.
-</details>
-
-## Building for the native platform
-*Note: Since 64-bit builds are currently not in a playable state, it is advised to build in a 32-bit environment. Another possibility is a 32-bit build on a 64-bit system (see above).*
-<details><summary>Linux</summary>
-
-### Installing dependencies on Debian and Ubuntu
-```
-sudo apt-get install cmake g++ libsdl2-mixer-dev libsdl2-ttf-dev libsodium-dev
-```
-### Installing dependencies on Fedora
-```
-sudo dnf install cmake glibc-devel SDL2-devel SDL2_ttf-devel SDL2_mixer-devel libsodium-devel libasan
-```
+- Left Analog : Move Hero
+- B : Attack
+- Y : Open Chest/Talk/Pick Up
+- X : Inventory
+- R : Charactor
+- Right Analog : Simulate Mouse
+- ZR : Left Mouse Click
+- ZL : Drink Heal Potion
+ 
 ### Compiling
 ```
-mkdir build
-cd build
-cmake ..
-make -j$(nproc)
+install devkitproA64, install libzip, libpng, libjpeg, switch-freetype, switch-mesa, switch-glad, switch-glm, switch-sdl2, switch-sdl2_ttf, switch-sdl2_mixer, switch-libvorbis
+Download source code, build with MAKE. If something failed check dependencies above
+.nro lives in release.
+
+Test with an emulator (RyuJinx) or real hardware
 ```
  
 # Credits
