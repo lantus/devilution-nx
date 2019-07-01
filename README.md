@@ -18,10 +18,16 @@
 - Right Analog : Simulate Mouse
 - ZR : Left Mouse Click
 - ZL : Drink Heal Potion
- 
+- Minus : Escape to Menu
+
+### Notes
+
+There are lots of bugs. 
+
 ### Compiling
 ```
-install devkitproA64, install libzip, libpng, libjpeg, switch-freetype, switch-mesa, switch-glad, switch-glm, switch-sdl2, switch-sdl2_ttf, switch-sdl2_mixer, switch-libvorbis
+install devkitproA64, install libzip, libpng, libjpeg, switch-freetype, switch-mesa, switch-glad, 
+switch-glm, switch-sdl2, switch-sdl2_ttf, switch-sdl2_mixer, switch-libvorbis
 Download source code, build with MAKE. If something failed check dependencies above
 .nro lives in release.
 
@@ -30,6 +36,7 @@ Test with an emulator (RyuJinx) or real hardware
  
 # Credits
 - Reverse engineered by GalaXyHaXz in 2018
+- Switch Port by MVG in 2019
 - [sanctuary](https://github.com/sanctuary) - extensively documenting Diablo's game engine
 - [BWAPI Team](https://github.com/bwapi) - providing library API to work with Storm
 - [Ladislav Zezula](https://github.com/ladislav-zezula) - reversing PKWARE library, further documenting Storm
