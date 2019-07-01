@@ -826,7 +826,7 @@ BOOL LeftMouseDown(int wParam)
 						CheckSBook();
 					} else if (pcurs >= CURSOR_FIRSTITEM) {
 						if (TryInvPut()) {
-							NetSendCmdPItem(TRUE, CMD_PUTITEM, cursmx, cursmy);
+							NetSendCmdPItem(TRUE, CMD_PUTITEM, MouseX, MouseY);
 							SetCursor_(CURSOR_HAND);
 						}
 					} else {

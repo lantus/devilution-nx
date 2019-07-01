@@ -395,7 +395,7 @@ void InitFont()
 	}
 	atexit(TTF_Quit);
 
-	font = TTF_OpenFont("sdmc:/CharisSILB.ttf", 17);
+	font = TTF_OpenFont("CharisSILB.ttf", 17);
 	if (font == NULL) {
 		printf("TTF_OpenFont: %s\n", TTF_GetError());
 		return;

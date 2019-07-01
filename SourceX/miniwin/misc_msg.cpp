@@ -167,18 +167,24 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 		break;
 	case SDL_JOYBUTTONUP: 
 		//doAttack = 0;
-		//doUse = 0;
+		//doUse = 0;	
+		switch(e.jbutton.button)
+		{
+			case 9:
+					lpMsg->message = DVL_WM_LBUTTONUP;
+					lpMsg->lParam = (MouseY << 16) | (MouseX & 0xFFFF);	
+					lpMsg->wParam = keystate_for_mouse(0);		
+					break;
+		}
 		break;
 	case SDL_JOYBUTTONDOWN:
 		switch(e.jbutton.button)
 		{
 			case  0:	// A
-				doAttack = 1;
-				doUse = 1;				
+				doAttack = 1;				 		
 				break;
 			case  1:	// B
-				doAttack = 1;
-				doUse = 1;
+				doAttack = 1;				 
 				break;
 			case  2:	// X
 				PressChar('i');
@@ -197,7 +203,16 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 				useBeltPotion(false);
 				break;
 			case  9:	// ZR
-				useBeltPotion(true);
+				//if (invflag || spselflag || chrflag)
+				//{
+					lpMsg->message = DVL_WM_LBUTTONDOWN;
+					lpMsg->lParam = (MouseY << 16) | (MouseX & 0xFFFF);	
+					lpMsg->wParam = keystate_for_mouse(DVL_MK_LBUTTON);
+				//}
+				//else
+				//{
+				//	useBeltPotion(true);
+				//}
 				break;
 			case 10:
 				break;						
@@ -221,21 +236,13 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 	case SDL_QUIT:
 		lpMsg->message = DVL_WM_QUIT;
 		break;
-	/*case SDL_KEYDOWN:
-	case SDL_KEYUP: {
-		int key = translate_sdl_key(e.key.keysym);
-		if (key == -1)
-			return false_avail();
-		lpMsg->message = e.type == SDL_KEYDOWN ? DVL_WM_KEYDOWN : DVL_WM_KEYUP;
-		lpMsg->wParam = (DWORD)key;
-		// HACK: Encode modifier in lParam for TranslateMessage later
-		lpMsg->lParam = e.key.keysym.mod << 16;
-	} break;*/
+	case SDL_FINGERMOTION:
 	case SDL_MOUSEMOTION:
 		lpMsg->message = DVL_WM_MOUSEMOVE;
 		lpMsg->lParam = (e.motion.y << 16) | (e.motion.x & 0xFFFF);
 		lpMsg->wParam = keystate_for_mouse(0);
 		break;
+	case SDL_FINGERDOWN:
 	case SDL_MOUSEBUTTONDOWN: {
 		int button = e.button.button;
 		if (button == SDL_BUTTON_LEFT) {
@@ -250,6 +257,7 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 			return false_avail();
 		}
 	} break;
+	case SDL_FINGERUP:
 	case SDL_MOUSEBUTTONUP: {
 		int button = e.button.button;
 		if (button == SDL_BUTTON_LEFT) {
@@ -407,10 +415,9 @@ void PollSwitchStick()
 		leftStickX *= 1 / (1 - deadzoneX);
 	if (deadzoneY > 0)
 		leftStickY *= 1 / (1 - deadzoneY);
-
-/*
-	float normRX = fmaxf(-1, (float)pos_right.dx / 4000);
-	float normRY = fmaxf(-1, (float)pos_right.dy / 4000);
+ 
+	float normRX = fmaxf(-1, (float)pos_right.dx / 32768);
+	float normRY = fmaxf(-1, (float)pos_right.dy / 32768);
 
 	rightStickX = (abs(normRX) < deadzoneX ? 0 : (abs(normRX) - deadzoneX) * (normRX / abs(normRX)));
 	rightStickY = (abs(normRY) < deadzoneY ? 0 : (abs(normRY) - deadzoneY) * (normRY / abs(normRY)));
@@ -422,20 +429,34 @@ void PollSwitchStick()
  
 
 	// right joystick moves cursor
-	if (rightStickX > 0.35 || rightStickY > 0.35 || rightStickX < -0.35 || rightStickY < -0.35) {
+	if (rightStickX > 0.35 || rightStickY > 0.35 || rightStickX < -0.35 || rightStickY < -0.35) {		
+		
+		if (pcurs == CURSOR_NONE)
+			SetCursor_(CURSOR_HAND);		
+		
 		int x = MouseX;
 		int y = MouseY;
-		if (rightStickX > 0.50)
+		if (rightStickX > 0.35)
 			x += 2;
-		else if(rightStickX < -0.50)
+		else if(rightStickX < -0.35)
 			x -= 2;
-		if (rightStickY > 0.50)
+		if (rightStickY > 0.35)
 			y -= 2;
-		else if (rightStickY < -0.50)
+		else if (rightStickY < -0.35)
 			y += 2;
-		SetCursorPos(x, y);
+		
+		if (x < 0)
+			x = 0;
+		if (y < 0)
+			y = 0;
+		
+		SetCursorPos(x, y);		
+		MouseX = x;
+		MouseY = y;
+		
+		
+		
 	} 
-	
-*/	 
+  
 }
 }
