@@ -453,7 +453,7 @@ void PollSwitchStick()
 			hiresDY += rightStickY * 256.0;
 
 		x += hiresDX / slowdown;
-		y += hiresDY / slowdown;
+		y += -(hiresDY) / slowdown;
 
 		hiresDX %= slowdown; // keep track of dx remainder for sub-pixel per frame mouse motion
 		hiresDY %= slowdown; // keep track of dy remainder for sub-pixel per frame mouse motion
