@@ -170,6 +170,11 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 		//doUse = 0;	
 		switch(e.jbutton.button)
 		{
+			case 8:
+					lpMsg->message = DVL_WM_RBUTTONUP;
+					lpMsg->lParam = (MouseY << 16) | (MouseX & 0xFFFF);
+					lpMsg->wParam = keystate_for_mouse(0);
+					break;
 			case 9:
 					lpMsg->message = DVL_WM_LBUTTONUP;
 					lpMsg->lParam = (MouseY << 16) | (MouseX & 0xFFFF);	
@@ -181,7 +186,7 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 		switch(e.jbutton.button)
 		{
 			case  0:	// A
-				doAttack = 1;				 		
+				useBeltPotion(false);
 				break;
 			case  1:	// B
 				doAttack = 1;				 
@@ -200,7 +205,9 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 				PressChar('c');
 				break;
 			case  8:	// ZL
-				useBeltPotion(false);
+				lpMsg->message = DVL_WM_RBUTTONDOWN;
+				lpMsg->lParam = (MouseY << 16) | (MouseX & 0xFFFF);
+				lpMsg->wParam = keystate_for_mouse(DVL_MK_RBUTTON);
 				break;
 			case  9:	// ZR
 				//if (invflag || spselflag || chrflag)
@@ -429,22 +436,28 @@ void PollSwitchStick()
  
 
 	// right joystick moves cursor
-	if (rightStickX > 0.35 || rightStickY > 0.35 || rightStickX < -0.35 || rightStickY < -0.35) {		
-		
+	if (rightStickX > 0.05 || rightStickY > 0.05 || rightStickX < -0.05 || rightStickY < -0.05) {
+
 		if (pcurs == CURSOR_NONE)
 			SetCursor_(CURSOR_HAND);		
 		
+		static int hiresDX = 0; // keep track of X sub-pixel per frame mouse motion
+		static int hiresDY = 0; // keep track of Y sub-pixel per frame mouse motion
+		const int slowdown = 128; // increase/decrease this to decrease/increase mouse speed
+
 		int x = MouseX;
 		int y = MouseY;
-		if (rightStickX > 0.35)
-			x += 2;
-		else if(rightStickX < -0.35)
-			x -= 2;
-		if (rightStickY > 0.35)
-			y -= 2;
-		else if (rightStickY < -0.35)
-			y += 2;
-		
+		if (rightStickX > 0.05 || rightStickX < 0.05)
+			hiresDX += rightStickX * 256.0;
+		if (rightStickY > 0.05 || rightStickY < 0.05)
+			hiresDY += rightStickY * 256.0;
+
+		x += hiresDX / slowdown;
+		y += hiresDY / slowdown;
+
+		hiresDX %= slowdown; // keep track of dx remainder for sub-pixel per frame mouse motion
+		hiresDY %= slowdown; // keep track of dy remainder for sub-pixel per frame mouse motion
+
 		if (x < 0)
 			x = 0;
 		if (y < 0)
@@ -453,9 +466,6 @@ void PollSwitchStick()
 		SetCursorPos(x, y);		
 		MouseX = x;
 		MouseY = y;
-		
-		
-		
 	} 
   
 }
