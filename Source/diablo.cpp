@@ -279,14 +279,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 #ifdef _DEBUG
 		SFileEnableDirectAccess(TRUE);
 #endif
-		diablo_init_screen();
-		svcOutputDebugString("2 starting",20);
-		diablo_parse_flags(lpCmdLine);
-		svcOutputDebugString("3 starting",20);
-		init_create_window(nCmdShow);
-		svcOutputDebugString("4 starting",20);
-		sound_init();
-		svcOutputDebugString("5 starting",20); 
+		diablo_init_screen();		 
+		diablo_parse_flags(lpCmdLine);		 
+		init_create_window(nCmdShow);	 
+		sound_init();		 
 		UiInitialize();
 
 #ifdef _DEBUG
