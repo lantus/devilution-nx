@@ -37,6 +37,7 @@ Test with an emulator (RyuJinx) or real hardware
 # Credits
 - Reverse engineered by GalaXyHaXz in 2018
 - Switch Port by MVG in 2019
+- Controller code by Jacob Fliss
 - [sanctuary](https://github.com/sanctuary) - extensively documenting Diablo's game engine
 - [BWAPI Team](https://github.com/bwapi) - providing library API to work with Storm
 - [Ladislav Zezula](https://github.com/ladislav-zezula) - reversing PKWARE library, further documenting Storm
