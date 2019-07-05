@@ -27,9 +27,10 @@
 There are lots of bugs. Check issues on the code repo.
 
 ### Compiling On Linux
-```
+``
 install devkitproA64, libzip, libpng, libjpeg, switch-freetype, switch-mesa, switch-glad, 
-switch-glm, switch-sdl2, switch-sdl2_ttf, switch-sdl2_mixer, switch-libvorbis```
+switch-glm, switch-sdl2, switch-sdl2_ttf, switch-sdl2_mixer, switch-libvorbis
+``
 
 - Build with MAKE. If something failed, check dependencies above.
 - .nro lives in release.
