@@ -1,6 +1,6 @@
 # Nintendo Switch Port of DevilutionX (Diablo)
 
-![alt text](https://i.imgur.com/DKVB198.png)
+![](https://i.imgur.com/DKVB198.png)
 
 ### How To Play:
 - Extract contents of diablo-nx.zip release into SDMC:\switch\diablo-nx
@@ -11,30 +11,31 @@
 ### Controls
 
 - Left Analog : Move Hero
-- B : Attack
-- Y : Open Chest/Talk/Pick Up
-- X : Inventory
-- R : Charactor
 - Right Analog : Simulate Mouse
-- ZR : Left Mouse Click
+- B : Attack nearby enemies, talk to towns people and merchants. Pickup & Drop items in inventory.
+- Y : Pickup gold, potions & equipment from ground, open chests and doors that are nearby.
+- X : Cast Spell, Previous Menu
+- A : Inventory
+- R : Character
+- ZR : Drink Mana Potion
 - ZL : Drink Heal Potion
-- Minus : Escape to Menu
+- Minus : Automap
+- Plus : Game Menu
 
 ### Notes
 
-There are lots of bugs. 
+There are lots of bugs. Check issues on the code repo.
 
-### Compiling
+### Compiling On Linux
 ```
-install devkitproA64, install libzip, libpng, libjpeg, switch-freetype, switch-mesa, switch-glad, 
-switch-glm, switch-sdl2, switch-sdl2_ttf, switch-sdl2_mixer, switch-libvorbis
-Download source code, build with MAKE. If something failed check dependencies above
-.nro lives in release.
+install devkitproA64, libzip, libpng, libjpeg, switch-freetype, switch-mesa, switch-glad, 
+switch-glm, switch-sdl2, switch-sdl2_ttf, switch-sdl2_mixer, switch-libvorbis```
 
-Test with an emulator (RyuJinx) or real hardware
-```
- 
-# Credits
+- Build with MAKE. If something failed, check dependencies above.
+- .nro lives in release.
+- Test with an emulator (RyuJinx) or real hardware.
+
+### Credits
 - Reverse engineered by GalaXyHaXz in 2018
 - Switch Port by MVG in 2019
 - Controller code by Jacob Fliss
