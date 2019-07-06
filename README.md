@@ -27,13 +27,13 @@
 There are lots of bugs. Check issues on the code repo.
 
 ### Compiling On Linux
-```
-install devkitproA64, libzip, libpng, libjpeg, switch-freetype, switch-mesa, switch-glad, switch-glm, switch-sdl2, switch-sdl2_ttf, switch-sdl2_mixer, switch-libvorbis, switch-libmikmod```
+```install devkitproA64, libzip, libpng, libjpeg, switch-freetype, switch-mesa, switch-glad, switch-glm, switch-sdl2, switch-sdl2_ttf, switch-sdl2_mixer, switch-libvorbis, switch-libmikmod```
+
 ```make```
 
 ### Compiling On Windows
 
-- Install [https://sourceforge.net/projects/devkitpro/](devkitpro)
+- Install [devkitpro](https://sourceforge.net/projects/devkitpro/)
 - Make the folders ```obj```, ```release``` and ```RomFS``` in devilution source code folder.
 - Open ```Start Button > DevKitPro > MSys2```
 - Type in ```pacman -S switch-freetype switch-mesa switch-glad switch-glm, switch-sdl2 switch-sdl2_ttf switch-sdl2_mixer switch-libvorbis switch-libmikmod```
@@ -41,7 +41,7 @@ install devkitproA64, libzip, libpng, libjpeg, switch-freetype, switch-mesa, swi
 
 ### Compiling On MacOS
 
-- Install [https://devkitpro.org/wiki/Getting_Started#macOS](DevKitPro)
+- Install [devkitpro](https://devkitpro.org/wiki/Getting_Started#macOS)
 - Open Terminal
 - Type in ```dkp-pacman -S switch-freetype switch-mesa switch-glad switch-glm, switch-sdl2 switch-sdl2_ttf switch-sdl2_mixer switch-libvorbis switch-libmikmod```
 - Type in ```make```
