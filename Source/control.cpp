@@ -1226,13 +1226,15 @@ void DrawCtrlPan()
 void DoSpeedBook()
 {
 	unsigned __int64 spells, spell;
-	int xo, yo, X, Y, i, j;
+	int xo, yo, X, Y, i, j, ssx, ssy;
 
 	spselflag = 1;
 	xo = 636;
 	yo = 495;
 	X = 600;
 	Y = 307;
+	ssx = 600;
+	ssy = 307;
 	if (plr[myplr]._pRSpell != -1) {
 		for (i = 0; i < 4; i++) {
 			switch (i) {
@@ -1256,6 +1258,13 @@ void DoSpeedBook()
 						X = xo - 36;
 						Y = yo - 188;
 					}
+					// JAKE: here's speedspell images. Store them into our array
+					ssx = xo - 36;
+					ssy = yo - 188;
+					speedspellscoords[speedspellcount].x = ssx;
+					speedspellscoords[speedspellcount].y = ssy;
+					speedspellcount++;
+					//
 					xo -= 56;
 					if (xo == 20) {
 						xo = 636;
@@ -2614,6 +2623,7 @@ BOOL control_presskeys(int vkey)
 			ret = FALSE;
 		} else {
 			if (vkey == VK_SPACE) {
+				control_press_enter(); // JAKE: added
 			} else if (vkey == VK_ESCAPE) {
 				control_reset_talk();
 			} else if (vkey == VK_RETURN) {

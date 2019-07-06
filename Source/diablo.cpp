@@ -1220,7 +1220,18 @@ void PressKey(int vkey)
 	} else if(vkey == VK_TAB) {
 		DoAutoMap();
 	} else if(vkey == VK_SPACE) {
-		if(!chrflag && invflag && MouseX < 480 && MouseY < VIEWPORT_HEIGHT) {
+		//if (ticks - menuopenslow < 300) {
+		//	return;
+		//}
+		//menuopenslow = ticks;
+		if (stextflag) {
+			STextEnter();
+		} else if (questlog) {
+			QuestlogEnter();
+		} else {
+			control_type_message();
+		}
+		/*if(!chrflag && invflag && MouseX < 480 && MouseY < VIEWPORT_HEIGHT) {
 			SetCursorPos(MouseX + 160, MouseY);
 		}
 		if(!invflag && chrflag && MouseX > 160 && MouseY < VIEWPORT_HEIGHT) {
@@ -1235,11 +1246,14 @@ void PressKey(int vkey)
 			qtextflag = 0;
 			sfx_stop();
 		}
+		if (stextflag) {
+			STextEnter();
+		}
 		questlog = FALSE;
 		automapflag = 0;
 		msgdelay = 0;
 		gamemenu_off();
-		doom_close();
+		doom_close();*/
 	}
 }
 // 4B8960: using guessed type int talkflag;
@@ -1303,15 +1317,23 @@ void PressChar(int vkey)
 		if(!stextflag) {
 			sbookflag = 0;
 			invflag = invflag == 0;
-			if(!invflag || chrflag) {
-				if(MouseX < 480 && MouseY < VIEWPORT_HEIGHT) {
+			//if(!invflag || chrflag) {
+				/*if(MouseX < 480 && MouseY < VIEWPORT_HEIGHT) {
 					SetCursorPos(MouseX + 160, MouseY);
+				}*/
+				// JAKE: Show cursor if inventory window open, set cursor to inv slot 1
+				if (newCurHidden) {
+					SetCursor_(CURSOR_HAND);
+					newCurHidden = false;
 				}
-			} else {
+				SetCursorPos((InvRect[25].X + (INV_SLOT_SIZE_PX / 2)), (InvRect[25].Y - (INV_SLOT_SIZE_PX / 2))); // inv cells are 29x29
+				return;                                                                                           // don't do the other cursor move stuff
+				//
+			/*} else {
 				if(MouseX > 160 && MouseY < VIEWPORT_HEIGHT) {
 					SetCursorPos(MouseX - 160, MouseY);
 				}
-			}
+			}*/
 		}
 		return;
 	case 'C':
@@ -1320,9 +1342,18 @@ void PressChar(int vkey)
 			questlog = FALSE;
 			chrflag = chrflag == 0;
 			if(!chrflag || invflag) {
-				if(MouseX > 160 && MouseY < VIEWPORT_HEIGHT) {
-					SetCursorPos(MouseX - 160, MouseY);
+				if (!chrbtnactive && plr[myplr]._pStatPts) {
+					if (newCurHidden) {
+						SetCursor_(CURSOR_HAND);
+						newCurHidden = false;
+					}
+					int x = attribute_inc_rects2[0][0] + (attribute_inc_rects2[0][2] / 2);
+					int y = attribute_inc_rects2[0][1] + (attribute_inc_rects2[0][3] / 2);
+					SetCursorPos(x, y);
 				}
+				/*if(MouseX > 160 && MouseY < VIEWPORT_HEIGHT) {
+					SetCursorPos(MouseX - 160, MouseY);
+				}*/
 			} else {
 				if(MouseX < 480 && MouseY < VIEWPORT_HEIGHT) {
 					SetCursorPos(MouseX + 160, MouseY);
@@ -1345,17 +1376,27 @@ void PressChar(int vkey)
 	case 'z':
 		zoomflag = zoomflag == 0;
 		return;
-	case 'S':
-	case 's':
-		if(!stextflag) {
+	case 'H': // JAKE: Changed, used to be 'S' and 's'
+	case 'h':
+		//SetAllSpellsCheat(); // for debugging
+		if (!stextflag) {
 			invflag = 0;
-			if(!spselflag) {
-				DoSpeedBook();
-			} else {
+			if (spselflag)
 				spselflag = 0;
-			}
+			else
+				DoSpeedBook();
 			track_repeat_walk(0);
 		}
+		return;
+	case 'x':
+	case 'X':
+		// JAKE: Spacebar used to go back, now Z goes back.
+		if (pcurs >= CURSOR_FIRSTITEM && invflag)
+			DropItemBeforeTrig();
+		//castwait = ticks;
+		if (!invflag && !talkflag)
+			RightMouseDown();
+		PressEscKey();
 		return;
 	case 'B':
 	case 'b':

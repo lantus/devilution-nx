@@ -165,23 +165,6 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 		lpMsg->message = e.type == SDL_KEYUP;
 		lpMsg->lParam = 0;
 		break;
-	//case SDL_JOYBUTTONUP: 
-		//doAttack = 0;
-		//doUse = 0;	
-	//	switch(e.jbutton.button)
-	//	{
-	//		case 8:
-			//		lpMsg->message = DVL_WM_RBUTTONUP;
-			//		lpMsg->lParam = (MouseY << 16) | (MouseX & 0xFFFF);
-			//		lpMsg->wParam = keystate_for_mouse(0);
-	//				break;
-	//		case 9:
-			//		lpMsg->message = DVL_WM_LBUTTONUP;
-			//		lpMsg->lParam = (MouseY << 16) | (MouseX & 0xFFFF);	
-			//		lpMsg->wParam = keystate_for_mouse(0);		
-	//				break;
-	//	}
-	//	break;
 	case SDL_JOYBUTTONDOWN:
 		switch(e.jbutton.button)
 		{
@@ -417,8 +400,8 @@ void PollSwitchStick()
 	hidJoystickRead(&pos_left, CONTROLLER_P1_AUTO, JOYSTICK_LEFT);
 	hidJoystickRead(&pos_right, CONTROLLER_P1_AUTO, JOYSTICK_RIGHT);
  
-	float normLX = fmaxf(-1, (float)pos_left.dx / 4000);
-	float normLY = fmaxf(-1, (float)pos_left.dy / 4000);
+	float normLX = fmaxf(-1, (float)pos_left.dx / 8000);
+	float normLY = fmaxf(-1, (float)pos_left.dy / 8000);
 
 	leftStickX = (abs(normLX) < deadzoneX ? 0 : (abs(normLX) - deadzoneX) * (normLX / abs(normLX)));
 	leftStickY = (abs(normLY) < deadzoneY ? 0 : (abs(normLY) - deadzoneY) * (normLY / abs(normLY)));
@@ -439,7 +422,6 @@ void PollSwitchStick()
 	if (deadzoneY > 0)
 		rightStickY *= 1 / (1 - deadzoneY);
  
-
 	// right joystick moves cursor
 	if (rightStickX > 0.05 || rightStickY > 0.05 || rightStickX < -0.05 || rightStickY < -0.05) {
 
