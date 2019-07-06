@@ -27,14 +27,26 @@
 There are lots of bugs. Check issues on the code repo.
 
 ### Compiling On Linux
-``
-install devkitproA64, libzip, libpng, libjpeg, switch-freetype, switch-mesa, switch-glad, 
-switch-glm, switch-sdl2, switch-sdl2_ttf, switch-sdl2_mixer, switch-libvorbis
-``
+```
+install devkitproA64, libzip, libpng, libjpeg, switch-freetype, switch-mesa, switch-glad, switch-glm, switch-sdl2, switch-sdl2_ttf, switch-sdl2_mixer, switch-libvorbis, switch-libmikmod```
+```make```
 
-- Build with MAKE. If something failed, check dependencies above.
-- .nro lives in release.
-- Test with an emulator (RyuJinx) or real hardware.
+### Compiling On Windows
+
+- Install [https://sourceforge.net/projects/devkitpro/](devkitpro)
+- Make the folders ```obj```, ```release``` and ```RomFS``` in devilution source code folder.
+- Open ```Start Button > DevKitPro > MSys2```
+- Type in ```pacman -S switch-freetype switch-mesa switch-glad switch-glm, switch-sdl2 switch-sdl2_ttf switch-sdl2_mixer switch-libvorbis switch-libmikmod```
+- Type in ```make```
+
+### Compiling On MacOS
+
+- Install [https://devkitpro.org/wiki/Getting_Started#macOS](DevKitPro)
+- Open Terminal
+- Type in ```dkp-pacman -S switch-freetype switch-mesa switch-glad switch-glm, switch-sdl2 switch-sdl2_ttf switch-sdl2_mixer switch-libvorbis switch-libmikmod```
+- Type in ```make```
+
+- .nro lives in release. Test with an emulator (RyuJinx) or real hardware.
 
 ### Credits
 - Reverse engineered by GalaXyHaXz in 2018
