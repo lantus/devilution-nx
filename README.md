@@ -52,6 +52,7 @@ There are lots of bugs. Check issues on the code repo.
 - Reverse engineered by GalaXyHaXz in 2018
 - Switch Port by MVG in 2019
 - Controller code by Jacob Fliss
+- RetroArch team for the Switch mman.h file
 - [sanctuary](https://github.com/sanctuary) - extensively documenting Diablo's game engine
 - [BWAPI Team](https://github.com/bwapi) - providing library API to work with Storm
 - [Ladislav Zezula](https://github.com/ladislav-zezula) - reversing PKWARE library, further documenting Storm

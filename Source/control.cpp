@@ -1235,7 +1235,7 @@ void DoSpeedBook()
 	Y = 307;
 	ssx = 600;
 	ssy = 307;
-	if (plr[myplr]._pRSpell != -1) {
+	//if (plr[myplr]._pRSpell != -1) { // JAKE: This prevents scrolls and skills from showing up on my snap cell list
 		for (i = 0; i < 4; i++) {
 			switch (i) {
 			case RSPLTYPE_SKILL:
@@ -1280,7 +1280,7 @@ void DoSpeedBook()
 				yo -= 56;
 			}
 		}
-	}
+	//}
 
 	SetCursorPos(X, Y);
 }

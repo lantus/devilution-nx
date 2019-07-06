@@ -1964,8 +1964,8 @@ void game_logic()
 		} else {
 			pcursitem = -1;
 		}
-	}	
-	keyboardExpension();
+	}
+	charMovement();
 }
 // 525718: using guessed type char cineflag;
 // 52571C: using guessed type int drawpanflag;
