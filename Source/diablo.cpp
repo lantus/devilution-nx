@@ -138,9 +138,13 @@ void run_game_loop(unsigned int uMsg)
 	start_game(uMsg);
 	/// ASSERT: assert(ghMainWnd);
 	saveProc = SetWindowProc(GM_Game);
+#if defined(SWITCH)
 	svcOutputDebugString("control_update_life_mana",20);
+#endif
 	control_update_life_mana();
+#if defined(SWITCH)
 	svcOutputDebugString("msg_process_net_packets",20);
+#endif
 	msg_process_net_packets();
 	gbRunGame = TRUE;
 	gbProcessPlayers = TRUE;
@@ -276,8 +280,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	fault_get_filter();
 
  
- 
+ #if defined(SWITCH)
 		svcOutputDebugString("starting",20);
+#endif
 #ifdef _DEBUG
 		SFileEnableDirectAccess(TRUE);
 #endif
@@ -314,8 +319,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		UiDestroy();
 		SaveGamma();
  
-
+#if defined(SWITCH)
 	svcOutputDebugString("ending",20);
+#endif
 	return FALSE;
 }
 
@@ -861,8 +867,10 @@ BOOL LeftMouseCmd(BOOL bShift)
 			return TRUE;
 	} else { // in dungeon
 		bNear = abs(plr[myplr].WorldX - cursmx) < 2 && abs(plr[myplr].WorldY - cursmy) < 2;
-		sprintf(debug, " bNear = %d, pcurs = %d, object[pcursobj]._oBreak = %d, pcursitem = %d",bNear,pcurs, object[pcursobj]._oBreak, pcursitem);
-		svcOutputDebugString(debug,256);
+#if defined(SWITCH)
+		sprintf(debug, " bNear = %d, pcurs = %d, object[pcursobj]._oBreak = %d, pcursitem = %d", bNear, pcurs, object[pcursobj]._oBreak, pcursitem);
+		svcOutputDebugString(debug, 256);
+#endif
 		if (pcursitem != -1 && pcurs <= CURSOR_HAND && !bShift) { // JAKE: allow no cursor as well
 			cursmx = 320;
 			cursmy = 240;
@@ -988,7 +996,7 @@ void RightMouseDown()
 			    || (!sbookflag || MouseX <= 320)
 			        && !TryIconCurs()
 			        && (pcursinvitem == -1 || !UseInvItem(myplr, pcursinvitem))) {
-				if (pcurs == 1) {
+				if (pcurs <= 1) { // JAKE: Allow people without cursor to cast spells too
 					if (pcursinvitem == -1 || !UseInvItem(myplr, pcursinvitem))
 						CheckPlrSpell();
 				} else if (pcurs > 1 && pcurs < 12) {
@@ -1196,7 +1204,8 @@ void PressKey(int vkey)
 		} else if(helpflag) {
 			HelpScrollUp();
 		} else if(automapflag) {
-			AutomapUp();
+			if (GetAsyncKeyState(VK_SHIFT) & 0x8000) // JAKE: [1] no move when u move
+				AutomapUp();
 		}
 	} else if(vkey == VK_DOWN) {
 		if(stextflag) {
@@ -1206,7 +1215,8 @@ void PressKey(int vkey)
 		} else if(helpflag) {
 			HelpScrollDown();
 		} else if(automapflag) {
-			AutomapDown();
+			if (GetAsyncKeyState(VK_SHIFT) & 0x8000) // JAKE: [2] no move when u move
+				AutomapDown();
 		}
 	} else if(vkey == VK_PRIOR) {
 		if(stextflag) {
@@ -1218,11 +1228,13 @@ void PressKey(int vkey)
 		}
 	} else if(vkey == VK_LEFT) {
 		if(automapflag && !talkflag) {
-			AutomapLeft();
+			if (GetAsyncKeyState(VK_SHIFT) & 0x8000) // JAKE: [3] no move when u move
+				AutomapLeft();
 		}
 	} else if(vkey == VK_RIGHT) {
 		if(automapflag && !talkflag) {
-			AutomapRight();
+			if (GetAsyncKeyState(VK_SHIFT) & 0x8000) // JAKE: [4] no move when u move
+				AutomapRight();
 		}
 	} else if(vkey == VK_TAB) {
 		DoAutoMap();
@@ -1334,6 +1346,8 @@ void PressChar(int vkey)
 					newCurHidden = false;
 				}
 				SetCursorPos((InvRect[25].X + (INV_SLOT_SIZE_PX / 2)), (InvRect[25].Y - (INV_SLOT_SIZE_PX / 2))); // inv cells are 29x29
+			    MouseX = (InvRect[25].X + (INV_SLOT_SIZE_PX / 2));
+			    MouseY = (InvRect[25].Y - (INV_SLOT_SIZE_PX / 2));
 				return;                                                                                           // don't do the other cursor move stuff
 				//
 			/*} else {
@@ -1348,15 +1362,19 @@ void PressChar(int vkey)
 		if(!stextflag) {
 			questlog = FALSE;
 			chrflag = chrflag == 0;
+
+			if (newCurHidden) {
+				SetCursor_(CURSOR_HAND);
+				newCurHidden = false;
+			}
+
 			if(!chrflag || invflag) {
 				if (!chrbtnactive && plr[myplr]._pStatPts) {
-					if (newCurHidden) {
-						SetCursor_(CURSOR_HAND);
-						newCurHidden = false;
-					}
 					int x = attribute_inc_rects2[0][0] + (attribute_inc_rects2[0][2] / 2);
 					int y = attribute_inc_rects2[0][1] + (attribute_inc_rects2[0][3] / 2);
 					SetCursorPos(x, y);
+					MouseX = x;
+					MouseY = y;
 				}
 				/*if(MouseX > 160 && MouseY < VIEWPORT_HEIGHT) {
 					SetCursorPos(MouseX - 160, MouseY);
@@ -1364,6 +1382,8 @@ void PressChar(int vkey)
 			} else {
 				if(MouseX < 480 && MouseY < VIEWPORT_HEIGHT) {
 					SetCursorPos(MouseX + 160, MouseY);
+					MouseX = MouseX + 160;
+					MouseY = MouseY;
 				}
 			}
 		}

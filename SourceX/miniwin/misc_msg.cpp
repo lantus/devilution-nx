@@ -486,37 +486,49 @@ void PollSwitchStick()
 	if (deadzoneY > 0)
 		rightStickY *= 1 / (1 - deadzoneY);
  
-	// right joystick moves cursor
+	// right joystick
 	if (rightStickX > 0.05 || rightStickY > 0.05 || rightStickX < -0.05 || rightStickY < -0.05) {
+		if (automapflag) { // move map
+			if (rightStickY < 0.05)
+				AutomapUp();
+			else if (rightStickY > 0.05)
+				AutomapDown();
+			else if (rightStickX < 0.05)
+				AutomapRight();
+			else if (rightStickX > 0.05)
+				AutomapLeft();
+		} else { // move cursor
+			if (pcurs == CURSOR_NONE) {
+				SetCursor_(CURSOR_HAND);
+				newCurHidden = false;
+			}
 
-		if (pcurs == CURSOR_NONE)
-			SetCursor_(CURSOR_HAND);		
-		
-		static int hiresDX = 0; // keep track of X sub-pixel per frame mouse motion
-		static int hiresDY = 0; // keep track of Y sub-pixel per frame mouse motion
-		const int slowdown = 128; // increase/decrease this to decrease/increase mouse speed
+			static int hiresDX = 0;   // keep track of X sub-pixel per frame mouse motion
+			static int hiresDY = 0;   // keep track of Y sub-pixel per frame mouse motion
+			const int slowdown = 128; // increase/decrease this to decrease/increase mouse speed
 
-		int x = MouseX;
-		int y = MouseY;
-		if (rightStickX > 0.05 || rightStickX < 0.05)
-			hiresDX += rightStickX * 256.0;
-		if (rightStickY > 0.05 || rightStickY < 0.05)
-			hiresDY += rightStickY * 256.0;
+			int x = MouseX;
+			int y = MouseY;
+			if (rightStickX > 0.05 || rightStickX < 0.05)
+				hiresDX += rightStickX * 256.0;
+			if (rightStickY > 0.05 || rightStickY < 0.05)
+				hiresDY += rightStickY * 256.0;
 
-		x += hiresDX / slowdown;
-		y += -(hiresDY) / slowdown;
+			x += hiresDX / slowdown;
+			y += -(hiresDY) / slowdown;
 
-		hiresDX %= slowdown; // keep track of dx remainder for sub-pixel per frame mouse motion
-		hiresDY %= slowdown; // keep track of dy remainder for sub-pixel per frame mouse motion
+			hiresDX %= slowdown; // keep track of dx remainder for sub-pixel per frame mouse motion
+			hiresDY %= slowdown; // keep track of dy remainder for sub-pixel per frame mouse motion
 
-		if (x < 0)
-			x = 0;
-		if (y < 0)
-			y = 0;
-		
-		SetCursorPos(x, y);		
-		MouseX = x;
-		MouseY = y;
+			if (x < 0)
+				x = 0;
+			if (y < 0)
+				y = 0;
+
+			SetCursorPos(x, y);
+			MouseX = x;
+			MouseY = y;
+		}
 	} 
   
 }

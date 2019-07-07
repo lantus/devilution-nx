@@ -36,14 +36,14 @@ There are lots of bugs. Check issues on the code repo.
 - Install [devkitpro](https://sourceforge.net/projects/devkitpro/)
 - Make the folders ```obj```, ```release``` and ```RomFS``` in devilution source code folder.
 - Open ```Start Button > DevKitPro > MSys2```
-- Type in ```pacman -S switch-freetype switch-mesa switch-glad switch-glm, switch-sdl2 switch-sdl2_ttf switch-sdl2_mixer switch-libvorbis switch-libmikmod```
+- Type in ```pacman -S switch-freetype switch-mesa switch-glad switch-glm switch-sdl2 switch-sdl2_ttf switch-sdl2_mixer switch-libvorbis switch-libmikmod```
 - Type in ```make```
 
 ### Compiling On MacOS
 
 - Install [devkitpro](https://devkitpro.org/wiki/Getting_Started#macOS)
 - Open Terminal
-- Type in ```dkp-pacman -S switch-freetype switch-mesa switch-glad switch-glm, switch-sdl2 switch-sdl2_ttf switch-sdl2_mixer switch-libvorbis switch-libmikmod```
+- Type in ```dkp-pacman -S switch-freetype switch-mesa switch-glad switch-glm switch-sdl2 switch-sdl2_ttf switch-sdl2_mixer switch-libvorbis switch-libmikmod```
 - Type in ```make```
 
 - .nro lives in release. Test with an emulator (RyuJinx) or real hardware.

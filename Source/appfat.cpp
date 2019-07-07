@@ -458,9 +458,9 @@ char *TraceLastError()
 void __cdecl app_fatal(const char *pszFmt, ...)
 {
 	va_list va;
-	
+#if defined(SWITCH)
 	svcOutputDebugString("fatal",20);
-
+#endif
 	va_start(va, pszFmt);
 	FreeDlg();
 #ifdef _DEBUG

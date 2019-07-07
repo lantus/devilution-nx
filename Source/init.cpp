@@ -179,16 +179,24 @@ HWND hWnd;
 	nWidth = 640;
 	nHeight = 480;
 #endif	
-	svcOutputDebugString("about to create window",20);
+	#if defined(SWITCH)
+		svcOutputDebugString("about to create window",20);
+	#endif
 	hWnd = CreateWindowEx(0, "DIABLO", "DIABLO", WS_POPUP, 0, 0, nWidth, nHeight, NULL, NULL, ghInst, NULL);
+#if defined(SWITCH)
 	svcOutputDebugString("CreateWindowEx",20);
+#endif
 	if (!hWnd)
 		app_fatal("Unable to create main window");
 	ShowWindow(hWnd, SW_SHOWNORMAL); // nCmdShow used only in beta: ShowWindow(hWnd, nCmdShow)
 	
+#if defined(SWITCH)
 	svcOutputDebugString("ShowWindow",20);
+#endif
 	UpdateWindow(hWnd);
+#if defined(SWITCH)
 	svcOutputDebugString("UpdateWindow",20);
+#endif
 	init_await_mom_parent_exit();
 	dx_init(hWnd);
 	BlackPalette();

@@ -162,9 +162,13 @@ BOOL pfile_create_player_description(char *dst, DWORD len)
 
 	myplr = 0;
 	pfile_read_player_from_save();
+#if defined(SWITCH)
 	svcOutputDebugString("game_2_ui_player",20);
+#endif
 	game_2_ui_player(plr, &uihero, gbValidSaveFile);
+#if defined(SWITCH)
 	svcOutputDebugString("UiSetupPlayerInfo",20);
+#endif
 	UiSetupPlayerInfo(gszHero, &uihero, GAME_ID);
 
 	if (dst != NULL && len) {
@@ -386,7 +390,9 @@ HANDLE pfile_open_save_archive(BOOL *showFixedMsg, DWORD save_num)
 
 	pfile_get_save_path(SrcStr, sizeof(SrcStr), save_num);
 	
+#if defined(SWITCH)
 	svcOutputDebugString(SrcStr,60);
+#endif
 	if (SFileOpenArchive(SrcStr, 0x7000, 0, &archive))
 		return archive;
 	return NULL;
