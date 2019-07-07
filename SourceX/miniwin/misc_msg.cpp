@@ -1,6 +1,8 @@
 #include <deque>
 #include <SDL.h>
-#include <switch.h>
+#if defined(SWITCH)
+	#include <switch.h>
+#endif
 #include "devilution.h"
 #include "stubs.h"
 
@@ -166,6 +168,8 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 		lpMsg->lParam = 0;
 		break;
 	case SDL_JOYBUTTONDOWN:
+		// switch controller
+		#if defined(SWITCH)
 		switch(e.jbutton.button)
 		{
 			case  0:	// A
@@ -247,6 +251,46 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 				PressKey(VK_DOWN);
 				break;
 		}
+		#else // xbox controller (untested)
+		switch(e.jbutton.button)
+		{
+			case  0:	// A
+				if (inmainmenu) {
+					PressKey(VK_RETURN);
+					keyboardExpansion(VK_RETURN);
+				} else {
+					if (stextflag)
+						talkwait = GetTickCount(); // JAKE: Wait before we re-initiate talking
+					PressKey(VK_SPACE);
+					keyboardExpansion(VK_SPACE);
+				}
+				break;
+			case  1:	// B
+				PressChar('i');
+				break;
+			case  2:	// X
+				PressKey(VK_RETURN);
+				keyboardExpansion(VK_RETURN);
+				break;
+			case  3:	// Y
+				PressChar('x');
+				break;
+			case  4:	// Left Shoulder
+				PressChar('h');
+				break;
+			case  5:	// Right Shoulder
+				PressChar('c');
+				break;
+			case  6:	// Back
+				PressKey(VK_TAB);
+				break;
+			case  7:	// Start
+				PressKey(VK_ESCAPE);
+				break;
+			case  8:	// Left Stick
+				break;
+		}
+		#endif
 		break;
 	case SDL_QUIT:
 		lpMsg->message = DVL_WM_QUIT;

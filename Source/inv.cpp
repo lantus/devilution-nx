@@ -1088,6 +1088,8 @@ void CheckInvPaste(int pnum, int mx, int my)
 			//if (cursor_ida == 1)
 			//	SetCursorPos(MouseX + (cursW >> 1), MouseY + (cursH >> 1));
 			SetCursorPos(MouseX + 10, MouseY + 10);
+			MouseX = MouseX + 10;
+			MouseY = MouseY + 10;
 			// end
 		SetCursor_(cn);
 	}
@@ -1274,6 +1276,8 @@ void CheckInvCut(int pnum, int mx, int my)
 				//SetCursorPos(mx - (cursW >> 1), MouseY - (cursH >> 1));
 				if (pcurs > 1) {
 					SetCursorPos(mx - 10, MouseY - 10);
+					MouseX = mx - 10;
+					MouseY = MouseY - 10;
 				}
 			// end
 		}
