@@ -1283,6 +1283,8 @@ void DoSpeedBook()
 	//}
 
 	SetCursorPos(X, Y);
+	MouseX = X;
+	MouseY = Y;
 }
 
 void DoPanBtn()

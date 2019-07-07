@@ -73,7 +73,11 @@
   // Macintosh
   #include <sys/types.h>
   #include <sys/stat.h>
-  #include "../switch/mman.h" // for Switch
+  #if defined(SWITCH)
+    #include "../switch/mman.h" // for Switch
+  #else
+    #include <sys/mman.h>
+  #endif
   #include <unistd.h>
   #include <fcntl.h>
   #include <stdlib.h>
@@ -106,7 +110,11 @@
 
   #include <sys/types.h>
   #include <sys/stat.h>
-  #include "../switch/mman.h" // for Switch
+  #if defined(SWITCH)
+    #include "../switch/mman.h" // for Switch
+  #else
+    #include <sys/mman.h>
+  #endif
   #include <fcntl.h>
   #include <unistd.h>
   #include <stdint.h>
@@ -134,7 +142,11 @@
 
   #include <sys/types.h>
   #include <sys/stat.h>
-  #include "../switch/mman.h" // for Switch
+  #if defined(SWITCH)
+    #include "../switch/mman.h" // for Switch
+  #else
+    #include <sys/mman.h>
+  #endif
   #include <fcntl.h>
   #include <unistd.h>
   #include <stdint.h>

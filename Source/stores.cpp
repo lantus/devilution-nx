@@ -1577,10 +1577,6 @@ void DrawSText()
 
 void STextESC()
 {
-	// JAKE: Wait before we re-initiate talking
-	talktick = GetTickCount();
-	talkwait = talktick;
-
 	if (qtextflag) {
 		qtextflag = FALSE;
 		if (leveltype == DTYPE_TOWN)

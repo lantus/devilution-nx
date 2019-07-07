@@ -1084,7 +1084,11 @@ void CheckInvPaste(int pnum, int mx, int my)
 	CalcPlrInv(pnum, TRUE);
 	if (pnum == myplr) {
 		if (cn == 1)
-			SetCursorPos(MouseX + (cursW >> 1), MouseY + (cursH >> 1));
+			// JAKE: [2] Keep item in the same slot, don't jump it up
+			//if (cursor_ida == 1)
+			//	SetCursorPos(MouseX + (cursW >> 1), MouseY + (cursH >> 1));
+			SetCursorPos(MouseX + 10, MouseY + 10);
+			// end
 		SetCursor_(cn);
 	}
 }
@@ -1266,7 +1270,12 @@ void CheckInvCut(int pnum, int mx, int my)
 		if (pnum == myplr) {
 			PlaySFX(IS_IGRAB);
 			SetCursor_(plr[pnum].HoldItem._iCurs + CURSOR_FIRSTITEM);
-			SetCursorPos(mx - (cursW >> 1), MouseY - (cursH >> 1));
+			// JAKE: [1] Keep item in the same slot, don't jump it up
+				//SetCursorPos(mx - (cursW >> 1), MouseY - (cursH >> 1));
+				if (pcurs > 1) {
+					SetCursorPos(mx - 10, MouseY - 10);
+				}
+			// end
 		}
 	}
 }
@@ -2023,7 +2032,7 @@ BOOL UseScroll()
 {
 	int i;
 
-	if (pcurs != CURSOR_HAND)
+	if (pcurs > CURSOR_HAND) // JAKE: let no cursor use scrolls too
 		return FALSE;
 	if (leveltype == DTYPE_TOWN && !spelldata[plr[myplr]._pRSpell].sTownSpell)
 		return FALSE;
@@ -2095,11 +2104,8 @@ BOOL UseInvItem(int pnum, int cii)
 	if (plr[pnum]._pInvincible && !plr[pnum]._pHitPoints && pnum == myplr)
 		return TRUE;
 
-	if (pcurs != 1 && !stextflag)
+	if (pcurs <= 1 && !stextflag) // JAKE: Let people without a cursor use items too
 	{
-	 
-
-
 	if (cii <= 5)
 		return FALSE;
 

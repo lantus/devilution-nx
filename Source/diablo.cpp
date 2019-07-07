@@ -1044,11 +1044,16 @@ void ReleaseKey(int vkey)
 		CaptureScreen();
 }
 
+static DWORD menuopenslow;
+extern DWORD ticks;
+
 void PressKey(int vkey)
 {
 	if(gmenu_presskeys(vkey) || control_presskeys(vkey)) {
 		return;
 	}
+
+	ticks = GetTickCount();
 
 	if(deathflag) {
 		if(sgnTimeoutCurs != 0) {
