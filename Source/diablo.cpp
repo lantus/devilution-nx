@@ -1,4 +1,6 @@
-#include <switch.h>
+#if defined(SWITCH)
+	#include <switch.h>
+#endif
 #include "diablo.h"
 #include "../3rdParty/Storm/Source/storm.h"
 #include "../DiabloUI/diabloui.h"
@@ -136,9 +138,13 @@ void run_game_loop(unsigned int uMsg)
 	start_game(uMsg);
 	/// ASSERT: assert(ghMainWnd);
 	saveProc = SetWindowProc(GM_Game);
+#if defined(SWITCH)
 	svcOutputDebugString("control_update_life_mana",20);
+#endif
 	control_update_life_mana();
+#if defined(SWITCH)
 	svcOutputDebugString("msg_process_net_packets",20);
+#endif
 	msg_process_net_packets();
 	gbRunGame = TRUE;
 	gbProcessPlayers = TRUE;
@@ -274,8 +280,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	fault_get_filter();
 
  
- 
+ #if defined(SWITCH)
 		svcOutputDebugString("starting",20);
+#endif
 #ifdef _DEBUG
 		SFileEnableDirectAccess(TRUE);
 #endif
@@ -312,8 +319,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		UiDestroy();
 		SaveGamma();
  
-
+#if defined(SWITCH)
 	svcOutputDebugString("ending",20);
+#endif
 	return FALSE;
 }
 
@@ -859,8 +867,10 @@ BOOL LeftMouseCmd(BOOL bShift)
 			return TRUE;
 	} else { // in dungeon
 		bNear = abs(plr[myplr].WorldX - cursmx) < 2 && abs(plr[myplr].WorldY - cursmy) < 2;
-		sprintf(debug, " bNear = %d, pcurs = %d, object[pcursobj]._oBreak = %d, pcursitem = %d",bNear,pcurs, object[pcursobj]._oBreak, pcursitem);
-		svcOutputDebugString(debug,256);
+#if defined(SWITCH)
+		sprintf(debug, " bNear = %d, pcurs = %d, object[pcursobj]._oBreak = %d, pcursitem = %d", bNear, pcurs, object[pcursobj]._oBreak, pcursitem);
+		svcOutputDebugString(debug, 256);
+#endif
 		if (pcursitem != -1 && pcurs <= CURSOR_HAND && !bShift) { // JAKE: allow no cursor as well
 			cursmx = 320;
 			cursmy = 240;
@@ -986,7 +996,7 @@ void RightMouseDown()
 			    || (!sbookflag || MouseX <= 320)
 			        && !TryIconCurs()
 			        && (pcursinvitem == -1 || !UseInvItem(myplr, pcursinvitem))) {
-				if (pcurs == 1) {
+				if (pcurs <= 1) { // JAKE: Allow people without cursor to cast spells too
 					if (pcursinvitem == -1 || !UseInvItem(myplr, pcursinvitem))
 						CheckPlrSpell();
 				} else if (pcurs > 1 && pcurs < 12) {
@@ -1044,11 +1054,16 @@ void ReleaseKey(int vkey)
 		CaptureScreen();
 }
 
+static DWORD menuopenslow;
+extern DWORD ticks;
+
 void PressKey(int vkey)
 {
 	if(gmenu_presskeys(vkey) || control_presskeys(vkey)) {
 		return;
 	}
+
+	ticks = GetTickCount();
 
 	if(deathflag) {
 		if(sgnTimeoutCurs != 0) {
@@ -1189,7 +1204,8 @@ void PressKey(int vkey)
 		} else if(helpflag) {
 			HelpScrollUp();
 		} else if(automapflag) {
-			AutomapUp();
+			if (GetAsyncKeyState(VK_SHIFT) & 0x8000) // JAKE: [1] no move when u move
+				AutomapUp();
 		}
 	} else if(vkey == VK_DOWN) {
 		if(stextflag) {
@@ -1199,7 +1215,8 @@ void PressKey(int vkey)
 		} else if(helpflag) {
 			HelpScrollDown();
 		} else if(automapflag) {
-			AutomapDown();
+			if (GetAsyncKeyState(VK_SHIFT) & 0x8000) // JAKE: [2] no move when u move
+				AutomapDown();
 		}
 	} else if(vkey == VK_PRIOR) {
 		if(stextflag) {
@@ -1211,16 +1228,29 @@ void PressKey(int vkey)
 		}
 	} else if(vkey == VK_LEFT) {
 		if(automapflag && !talkflag) {
-			AutomapLeft();
+			if (GetAsyncKeyState(VK_SHIFT) & 0x8000) // JAKE: [3] no move when u move
+				AutomapLeft();
 		}
 	} else if(vkey == VK_RIGHT) {
 		if(automapflag && !talkflag) {
-			AutomapRight();
+			if (GetAsyncKeyState(VK_SHIFT) & 0x8000) // JAKE: [4] no move when u move
+				AutomapRight();
 		}
 	} else if(vkey == VK_TAB) {
 		DoAutoMap();
 	} else if(vkey == VK_SPACE) {
-		if(!chrflag && invflag && MouseX < 480 && MouseY < VIEWPORT_HEIGHT) {
+		//if (ticks - menuopenslow < 300) {
+		//	return;
+		//}
+		//menuopenslow = ticks;
+		if (stextflag) {
+			STextEnter();
+		} else if (questlog) {
+			QuestlogEnter();
+		} else {
+			control_type_message();
+		}
+		/*if(!chrflag && invflag && MouseX < 480 && MouseY < VIEWPORT_HEIGHT) {
 			SetCursorPos(MouseX + 160, MouseY);
 		}
 		if(!invflag && chrflag && MouseX > 160 && MouseY < VIEWPORT_HEIGHT) {
@@ -1235,11 +1265,14 @@ void PressKey(int vkey)
 			qtextflag = 0;
 			sfx_stop();
 		}
+		if (stextflag) {
+			STextEnter();
+		}
 		questlog = FALSE;
 		automapflag = 0;
 		msgdelay = 0;
 		gamemenu_off();
-		doom_close();
+		doom_close();*/
 	}
 }
 // 4B8960: using guessed type int talkflag;
@@ -1303,15 +1336,25 @@ void PressChar(int vkey)
 		if(!stextflag) {
 			sbookflag = 0;
 			invflag = invflag == 0;
-			if(!invflag || chrflag) {
-				if(MouseX < 480 && MouseY < VIEWPORT_HEIGHT) {
+			//if(!invflag || chrflag) {
+				/*if(MouseX < 480 && MouseY < VIEWPORT_HEIGHT) {
 					SetCursorPos(MouseX + 160, MouseY);
+				}*/
+				// JAKE: Show cursor if inventory window open, set cursor to inv slot 1
+				if (newCurHidden) {
+					SetCursor_(CURSOR_HAND);
+					newCurHidden = false;
 				}
-			} else {
+				SetCursorPos((InvRect[25].X + (INV_SLOT_SIZE_PX / 2)), (InvRect[25].Y - (INV_SLOT_SIZE_PX / 2))); // inv cells are 29x29
+			    MouseX = (InvRect[25].X + (INV_SLOT_SIZE_PX / 2));
+			    MouseY = (InvRect[25].Y - (INV_SLOT_SIZE_PX / 2));
+				return;                                                                                           // don't do the other cursor move stuff
+				//
+			/*} else {
 				if(MouseX > 160 && MouseY < VIEWPORT_HEIGHT) {
 					SetCursorPos(MouseX - 160, MouseY);
 				}
-			}
+			}*/
 		}
 		return;
 	case 'C':
@@ -1319,13 +1362,28 @@ void PressChar(int vkey)
 		if(!stextflag) {
 			questlog = FALSE;
 			chrflag = chrflag == 0;
+
+			if (newCurHidden) {
+				SetCursor_(CURSOR_HAND);
+				newCurHidden = false;
+			}
+
 			if(!chrflag || invflag) {
-				if(MouseX > 160 && MouseY < VIEWPORT_HEIGHT) {
-					SetCursorPos(MouseX - 160, MouseY);
+				if (!chrbtnactive && plr[myplr]._pStatPts) {
+					int x = attribute_inc_rects2[0][0] + (attribute_inc_rects2[0][2] / 2);
+					int y = attribute_inc_rects2[0][1] + (attribute_inc_rects2[0][3] / 2);
+					SetCursorPos(x, y);
+					MouseX = x;
+					MouseY = y;
 				}
+				/*if(MouseX > 160 && MouseY < VIEWPORT_HEIGHT) {
+					SetCursorPos(MouseX - 160, MouseY);
+				}*/
 			} else {
 				if(MouseX < 480 && MouseY < VIEWPORT_HEIGHT) {
 					SetCursorPos(MouseX + 160, MouseY);
+					MouseX = MouseX + 160;
+					MouseY = MouseY;
 				}
 			}
 		}
@@ -1345,17 +1403,27 @@ void PressChar(int vkey)
 	case 'z':
 		zoomflag = zoomflag == 0;
 		return;
-	case 'S':
-	case 's':
-		if(!stextflag) {
+	case 'H': // JAKE: Changed, used to be 'S' and 's'
+	case 'h':
+		//SetAllSpellsCheat(); // for debugging
+		if (!stextflag) {
 			invflag = 0;
-			if(!spselflag) {
-				DoSpeedBook();
-			} else {
+			if (spselflag)
 				spselflag = 0;
-			}
+			else
+				DoSpeedBook();
 			track_repeat_walk(0);
 		}
+		return;
+	case 'x':
+	case 'X':
+		// JAKE: Spacebar used to go back, now Z goes back.
+		if (pcurs >= CURSOR_FIRSTITEM && invflag)
+			DropItemBeforeTrig();
+		//castwait = ticks;
+		if (!invflag && !talkflag)
+			RightMouseDown();
+		PressEscKey();
 		return;
 	case 'B':
 	case 'b':
@@ -1923,8 +1991,8 @@ void game_logic()
 		} else {
 			pcursitem = -1;
 		}
-	}	
-	keyboardExpension();
+	}
+	charMovement();
 }
 // 525718: using guessed type char cineflag;
 // 52571C: using guessed type int drawpanflag;

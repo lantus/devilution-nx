@@ -1,4 +1,6 @@
-#include <switch.h>
+#if defined(SWITCH)
+	#include <switch.h>
+#endif
 #include "diablo.h"
 #include "../3rdParty/Storm/Source/storm.h"
 
@@ -93,15 +95,25 @@ void ShowProgress(unsigned int uMsg)
 		IncProgress();
 		break;
 	case WM_DIABNEWGAME:
+#if defined(SWITCH)
 		svcOutputDebugString("IncProgress",20);
+#endif
 		IncProgress();
+#if defined(SWITCH)
 		svcOutputDebugString("FreeGameMem",20);
+#endif
 		FreeGameMem();
+#if defined(SWITCH)
 		svcOutputDebugString("IncProgress",20);
+#endif
 		IncProgress();
+#if defined(SWITCH)
 		svcOutputDebugString("pfile_remove_temp_files",20);
+#endif
 		pfile_remove_temp_files();
+#if defined(SWITCH)
 		svcOutputDebugString("LoadGameLevel",20);
+#endif
 		LoadGameLevel(TRUE, 0);
 		IncProgress();
 		break;

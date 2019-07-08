@@ -1,4 +1,6 @@
-#include <switch.h>
+#if defined(SWITCH)
+	#include <switch.h>
+#endif
 
 #include "devilution.h"
 #include "miniwin/ddraw.h"

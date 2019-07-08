@@ -1,6 +1,8 @@
 #include <deque>
 #include <SDL.h>
-#include <switch.h>
+#if defined(SWITCH)
+	#include <switch.h>
+#endif
 #include "devilution.h"
 #include "stubs.h"
 
@@ -165,38 +167,42 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 		lpMsg->message = e.type == SDL_KEYUP;
 		lpMsg->lParam = 0;
 		break;
-	case SDL_JOYBUTTONUP: 
-		//doAttack = 0;
-		//doUse = 0;	
-		switch(e.jbutton.button)
-		{
-			case 8:
-					lpMsg->message = DVL_WM_RBUTTONUP;
-					lpMsg->lParam = (MouseY << 16) | (MouseX & 0xFFFF);
-					lpMsg->wParam = keystate_for_mouse(0);
-					break;
-			case 9:
-					lpMsg->message = DVL_WM_LBUTTONUP;
-					lpMsg->lParam = (MouseY << 16) | (MouseX & 0xFFFF);	
-					lpMsg->wParam = keystate_for_mouse(0);		
-					break;
-		}
-		break;
 	case SDL_JOYBUTTONDOWN:
+		// switch controller
+		#if defined(SWITCH)
 		switch(e.jbutton.button)
 		{
 			case  0:	// A
-				useBeltPotion(false);
-				break;
-			case  1:	// B
-				doAttack = 1;				 
-				break;
-			case  2:	// X
 				PressChar('i');
 				break;
+			case  1:	// B
+				if (inmainmenu) {
+					PressKey(VK_RETURN);
+					keyboardExpansion(VK_RETURN);
+				} else {
+					if (stextflag)
+						talkwait = GetTickCount(); // JAKE: Wait before we re-initiate talking
+					PressKey(VK_SPACE);
+					keyboardExpansion(VK_SPACE);
+				}
+				break;
+			case  2:	// X
+				PressChar('x');
+				break;
 			case  3:	// Y
-				doUse = 1;
 				PressKey(VK_RETURN);
+				keyboardExpansion(VK_RETURN);
+				break;
+			case  5:	// right joystick click
+				if (newCurHidden) { // show cursor first, before clicking
+					SetCursor_(CURSOR_HAND);
+					newCurHidden = false;
+				}
+				if (spselflag) {
+					SetSpell();
+				} else {
+					LeftMouseCmd(false);
+				}
 				break;
 			case  6:	// L
 				PressChar('h');
@@ -205,40 +211,86 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 				PressChar('c');
 				break;
 			case  8:	// ZL
-				lpMsg->message = DVL_WM_RBUTTONDOWN;
-				lpMsg->lParam = (MouseY << 16) | (MouseX & 0xFFFF);
-				lpMsg->wParam = keystate_for_mouse(DVL_MK_RBUTTON);
+				useBeltPotion(false); // health potion
 				break;
 			case  9:	// ZR
-				//if (invflag || spselflag || chrflag)
-				//{
-					lpMsg->message = DVL_WM_LBUTTONDOWN;
-					lpMsg->lParam = (MouseY << 16) | (MouseX & 0xFFFF);	
-					lpMsg->wParam = keystate_for_mouse(DVL_MK_LBUTTON);
-				//}
-				//else
-				//{
-				//	useBeltPotion(true);
-				//}
+				useBeltPotion(true); // mana potion
 				break;
-			case 10:
-				break;						
-			case 11:
+			case 10:	// plus
 				PressKey(VK_ESCAPE);
-				break;								
-			case 16:
+				break;
+			case 11:	// minus
+				PressKey(VK_TAB);
+				break;
+			case 12:	// L_DPAD
+				PressKey(VK_LEFT);
+				movements(VK_LEFT);
+				break;
+			case 13:	// U_DPAD
+				PressKey(VK_UP);
+				movements(VK_UP);
+				break;
+			case 14:	// R_DPAD
+				PressKey(VK_RIGHT);
+				movements(VK_RIGHT);
+				break;
+			case 15:	// D_DPAD
+				PressKey(VK_DOWN);
+				movements(VK_DOWN);
+				break;			
+			case 16:	// L_JSTICK
 				PressKey(VK_LEFT);
 				break;
-			case 17:
+			case 17:	// U_JSTICK
 				PressKey(VK_UP);
 				break;	
-			case 18:
+			case 18:	// R_JSTICK
 				PressKey(VK_RIGHT);
 				break;	
-			case 19:
+			case 19:	// D_JSTICK
 				PressKey(VK_DOWN);
-				break;					
+				break;
 		}
+		#else // xbox controller (untested)
+		switch(e.jbutton.button)
+		{
+			case  0:	// A
+				if (inmainmenu) {
+					PressKey(VK_RETURN);
+					keyboardExpansion(VK_RETURN);
+				} else {
+					if (stextflag)
+						talkwait = GetTickCount(); // JAKE: Wait before we re-initiate talking
+					PressKey(VK_SPACE);
+					keyboardExpansion(VK_SPACE);
+				}
+				break;
+			case  1:	// B
+				PressChar('i');
+				break;
+			case  2:	// X
+				PressKey(VK_RETURN);
+				keyboardExpansion(VK_RETURN);
+				break;
+			case  3:	// Y
+				PressChar('x');
+				break;
+			case  4:	// Left Shoulder
+				PressChar('h');
+				break;
+			case  5:	// Right Shoulder
+				PressChar('c');
+				break;
+			case  6:	// Back
+				PressKey(VK_TAB);
+				break;
+			case  7:	// Start
+				PressKey(VK_ESCAPE);
+				break;
+			case  8:	// Left Stick
+				break;
+		}
+		#endif
 		break;
 	case SDL_QUIT:
 		lpMsg->message = DVL_WM_QUIT;
@@ -412,8 +464,8 @@ void PollSwitchStick()
 	hidJoystickRead(&pos_left, CONTROLLER_P1_AUTO, JOYSTICK_LEFT);
 	hidJoystickRead(&pos_right, CONTROLLER_P1_AUTO, JOYSTICK_RIGHT);
  
-	float normLX = fmaxf(-1, (float)pos_left.dx / 4000);
-	float normLY = fmaxf(-1, (float)pos_left.dy / 4000);
+	float normLX = fmaxf(-1, (float)pos_left.dx / 8000);
+	float normLY = fmaxf(-1, (float)pos_left.dy / 8000);
 
 	leftStickX = (abs(normLX) < deadzoneX ? 0 : (abs(normLX) - deadzoneX) * (normLX / abs(normLX)));
 	leftStickY = (abs(normLY) < deadzoneY ? 0 : (abs(normLY) - deadzoneY) * (normLY / abs(normLY)));
@@ -434,38 +486,49 @@ void PollSwitchStick()
 	if (deadzoneY > 0)
 		rightStickY *= 1 / (1 - deadzoneY);
  
-
-	// right joystick moves cursor
+	// right joystick
 	if (rightStickX > 0.05 || rightStickY > 0.05 || rightStickX < -0.05 || rightStickY < -0.05) {
+		if (automapflag) { // move map
+			if (rightStickY < 0.05)
+				AutomapUp();
+			else if (rightStickY > 0.05)
+				AutomapDown();
+			else if (rightStickX < 0.05)
+				AutomapRight();
+			else if (rightStickX > 0.05)
+				AutomapLeft();
+		} else { // move cursor
+			if (pcurs == CURSOR_NONE) {
+				SetCursor_(CURSOR_HAND);
+				newCurHidden = false;
+			}
 
-		if (pcurs == CURSOR_NONE)
-			SetCursor_(CURSOR_HAND);		
-		
-		static int hiresDX = 0; // keep track of X sub-pixel per frame mouse motion
-		static int hiresDY = 0; // keep track of Y sub-pixel per frame mouse motion
-		const int slowdown = 128; // increase/decrease this to decrease/increase mouse speed
+			static int hiresDX = 0;   // keep track of X sub-pixel per frame mouse motion
+			static int hiresDY = 0;   // keep track of Y sub-pixel per frame mouse motion
+			const int slowdown = 128; // increase/decrease this to decrease/increase mouse speed
 
-		int x = MouseX;
-		int y = MouseY;
-		if (rightStickX > 0.05 || rightStickX < 0.05)
-			hiresDX += rightStickX * 256.0;
-		if (rightStickY > 0.05 || rightStickY < 0.05)
-			hiresDY += rightStickY * 256.0;
+			int x = MouseX;
+			int y = MouseY;
+			if (rightStickX > 0.05 || rightStickX < 0.05)
+				hiresDX += rightStickX * 256.0;
+			if (rightStickY > 0.05 || rightStickY < 0.05)
+				hiresDY += rightStickY * 256.0;
 
-		x += hiresDX / slowdown;
-		y += -(hiresDY) / slowdown;
+			x += hiresDX / slowdown;
+			y += -(hiresDY) / slowdown;
 
-		hiresDX %= slowdown; // keep track of dx remainder for sub-pixel per frame mouse motion
-		hiresDY %= slowdown; // keep track of dy remainder for sub-pixel per frame mouse motion
+			hiresDX %= slowdown; // keep track of dx remainder for sub-pixel per frame mouse motion
+			hiresDY %= slowdown; // keep track of dy remainder for sub-pixel per frame mouse motion
 
-		if (x < 0)
-			x = 0;
-		if (y < 0)
-			y = 0;
-		
-		SetCursorPos(x, y);		
-		MouseX = x;
-		MouseY = y;
+			if (x < 0)
+				x = 0;
+			if (y < 0)
+				y = 0;
+
+			SetCursorPos(x, y);
+			MouseX = x;
+			MouseY = y;
+		}
 	} 
   
 }

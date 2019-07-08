@@ -108,8 +108,12 @@ void gamemenu_new_game(BOOL bActivate)
 
 void gamemenu_quit_game(BOOL bActivate)
 {
+#ifndef SWITCH // JAKE: This will crash the console otherwise, this doesn't seem to fix it though.
 	gamemenu_new_game(bActivate);
 	gbRunGameResult = FALSE;
+#else
+	gamemenu_new_game(bActivate);
+#endif
 }
 
 void gamemenu_load_game(BOOL bActivate)
@@ -137,9 +141,9 @@ void gamemenu_save_game(BOOL bActivate)
 	if (pcurs <= CURSOR_HAND) {	
 		SetCursor_(CURSOR_HAND);
 		
-		if (pcurs != CURSOR_HAND) {
+		/*if (pcurs != CURSOR_HAND) { // JAKE: Also let people save if cursor disappears
 			return;
-		}
+		}*/
 
 		if (plr[myplr]._pmode == PM_DEATH || deathflag) {
 			gamemenu_off();

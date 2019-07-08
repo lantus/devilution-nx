@@ -1,4 +1,6 @@
-#include <switch.h>
+#if defined(SWITCH)
+	#include <switch.h>
+#endif
 #include "diablo.h"
 #include "../3rdParty/Storm/Source/storm.h"
 
@@ -26,7 +28,9 @@ void play_movie(char *pszMovie, BOOL user_can_close)
 	sfx_stop();
 	effects_play_sound("Sfx\\Misc\\blank.wav");
 
+#if defined(SWITCH)
 	svcOutputDebugString(pszMovie,20);
+#endif
 	SVidPlayBegin(pszMovie, 0, 0, 0, 0, loop_movie ? 0x100C0808 : 0x10280808, &video_stream);
 	if (video_stream) {
 		MSG Msg;
