@@ -13,12 +13,14 @@
 - Left Analog : Move Hero
 - Right Analog : Simulate Mouse
 - B : Attack nearby enemies, talk to towns people and merchants. Pickup & Drop items in inventory.
-- Y : Pickup gold, potions & equipment from ground, open chests and doors that are nearby.
+- Y : Pickup gold, potions & equipment from ground, open chests and doors that are nearby. Use item when in inventory (read books etc.).
 - X : Cast Spell, Previous Menu
 - A : Inventory
 - R : Character
 - ZR : Drink Mana Potion
 - ZL : Drink Heal Potion
+- Left Analog Click : Quest Log
+- Right Analog Click : Perform left mouse click action on selected object or monster
 - Minus : Automap
 - Plus : Game Menu
 

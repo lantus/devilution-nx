@@ -1369,21 +1369,24 @@ void PressChar(int vkey)
 			}
 
 			if(!chrflag || invflag) {
+				if(MouseX > 160 && MouseY < VIEWPORT_HEIGHT) {
+					SetCursorPos(MouseX - 160, MouseY);
+					MouseX = MouseX - 160;
+					MouseY = MouseY;
+				}
+			} else {
 				if (!chrbtnactive && plr[myplr]._pStatPts) {
 					int x = attribute_inc_rects2[0][0] + (attribute_inc_rects2[0][2] / 2);
 					int y = attribute_inc_rects2[0][1] + (attribute_inc_rects2[0][3] / 2);
 					SetCursorPos(x, y);
 					MouseX = x;
 					MouseY = y;
-				}
-				/*if(MouseX > 160 && MouseY < VIEWPORT_HEIGHT) {
-					SetCursorPos(MouseX - 160, MouseY);
-				}*/
-			} else {
-				if(MouseX < 480 && MouseY < VIEWPORT_HEIGHT) {
-					SetCursorPos(MouseX + 160, MouseY);
-					MouseX = MouseX + 160;
-					MouseY = MouseY;
+				} else {
+					if(MouseX < 480 && MouseY < VIEWPORT_HEIGHT) {
+						SetCursorPos(MouseX + 160, MouseY);
+						MouseX = MouseX + 160;
+						MouseY = MouseY;
+					}
 				}
 			}
 		}
