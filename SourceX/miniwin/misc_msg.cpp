@@ -1,10 +1,8 @@
 #include <deque>
 #include <SDL.h>
-#if defined(SWITCH)
-	#include <switch.h>
-#endif
 #include "devilution.h"
 #include "stubs.h"
+#include <math.h>
 
 /** @file
  * *
@@ -15,21 +13,29 @@
 namespace dvl {
 
 bool conInv = false;
-float leftStickX;
-float leftStickY;
-float rightStickX;
-float rightStickY;
-float leftTrigger;
-float rightTrigger;
-float deadzoneX;
-float deadzoneY;
+float leftStickX = 0;
+float leftStickY = 0;
+float rightStickX = 0;
+float rightStickY = 0;
+float leftTrigger = 0;
+float rightTrigger = 0;
+float rightDeadzone = 0.07;
+float leftDeadzone = 0.07;
 int doAttack 	= 0;
 int doUse 		= 0;
 int doChar 		= 0;
 
-JoystickPosition pos_left, pos_right;
+static int leftStickXUnscaled = 0; // raw axis values reported by SDL_JOYAXISMOTION
+static int leftStickYUnscaled = 0;
+static int rightStickXUnscaled = 0;
+static int rightStickYUnscaled = 0;
+static int hiresDX = 0;   // keep track of X/Y sub-pixel per frame mouse motion
+static int hiresDY = 0;
+static int64_t currentTime = 0; // used to update joystick mouse once per frame
+static int64_t lastTime = 0;
+static void ScaleJoystickAxes(float *x, float *y, float deadzone);
+static void HandleJoystickAxes();
 
-void PollSwitchStick();
 static std::deque<MSG> message_queue;
 
 static int translate_sdl_key(SDL_Keysym key)
@@ -123,13 +129,13 @@ static WINBOOL false_avail()
 
 WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilterMax, UINT wRemoveMsg)
 {
-	static signed short rstick_x;
-	static signed short lstick_x;
-	static signed short rstick_y;
-	static signed short lstick_y;
+	// update joystick mouse at maximally 60 fps
+	currentTime = SDL_GetTicks();
+	if ((currentTime - lastTime) > 15) {
+		HandleJoystickAxes();
+		lastTime = currentTime;
+	}
 	
-	static short lastmouseX, lastmouseY;	
- 
 	if (wMsgFilterMin != 0)
 		UNIMPLEMENTED();
 	if (wMsgFilterMax != 0)
@@ -163,7 +169,26 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 
 	switch (e.type) { 
 	case SDL_JOYAXISMOTION:
-		PollSwitchStick();
+		switch (e.jaxis.axis) {
+			case 0:
+				leftStickXUnscaled = e.jaxis.value;
+				break;
+			case 1:
+				leftStickYUnscaled = -e.jaxis.value;
+				break;
+			case 2:
+				rightStickXUnscaled = e.jaxis.value;
+				break;
+			case 3:
+				rightStickYUnscaled = -e.jaxis.value;
+				break;
+		}
+		leftStickX = leftStickXUnscaled;
+		leftStickY = leftStickYUnscaled;
+		ScaleJoystickAxes(&leftStickX, &leftStickY, leftDeadzone);
+		rightStickX = rightStickXUnscaled;
+		rightStickY = rightStickYUnscaled;
+		ScaleJoystickAxes(&rightStickX, &rightStickY, rightDeadzone);
 		lpMsg->message = e.type == SDL_KEYUP;
 		lpMsg->lParam = 0;
 		break;
@@ -207,11 +232,9 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 					SetCursor_(CURSOR_HAND);
 					newCurHidden = false;
 				}
-				if (spselflag) {
-					SetSpell();
-				} else {
-					LeftMouseCmd(false);
-				}
+				lpMsg->message = DVL_WM_LBUTTONDOWN;
+				lpMsg->lParam = (MouseY << 16) | (MouseX & 0xFFFF);
+				lpMsg->wParam = keystate_for_mouse(DVL_MK_LBUTTON);
 				break;
 			case  6:	// L
 				PressChar('h');
@@ -311,6 +334,11 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 					lpMsg->lParam = (MouseY << 16) | (MouseX & 0xFFFF);
 					lpMsg->wParam = keystate_for_mouse(0);
 				}
+				break;
+			case  5:	// right joystick click
+				lpMsg->message = DVL_WM_LBUTTONUP;
+				lpMsg->lParam = (MouseY << 16) | (MouseX & 0xFFFF);
+				lpMsg->wParam = keystate_for_mouse(0);
 				break;
 		}
 		#endif
@@ -478,47 +506,65 @@ WINBOOL PostMessageA(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 	return true;
 }
 
-void PollSwitchStick()
+void ScaleJoystickAxes(float *x, float *y, float deadzone)
 {
-	int h,k = 0;
-	hidScanInput();
-	
-	//Read the joysticks' position
-	hidJoystickRead(&pos_left, CONTROLLER_P1_AUTO, JOYSTICK_LEFT);
-	hidJoystickRead(&pos_right, CONTROLLER_P1_AUTO, JOYSTICK_RIGHT);
- 
-	float normLX = fmaxf(-1, (float)pos_left.dx / 8000);
-	float normLY = fmaxf(-1, (float)pos_left.dy / 8000);
+	//radial and scaled dead_zone
+	//http://www.third-helix.com/2013/04/12/doing-thumbstick-dead-zones-right.html
+	//input values go from -32767.0...+32767.0, output values are from -1.0 to 1.0;
 
-	leftStickX = (abs(normLX) < deadzoneX ? 0 : (abs(normLX) - deadzoneX) * (normLX / abs(normLX)));
-	leftStickY = (abs(normLY) < deadzoneY ? 0 : (abs(normLY) - deadzoneY) * (normLY / abs(normLY)));
+	if (deadzone == 0) {
+		return;
+	}
+	if (deadzone >= 1.0) {
+		*x = 0;
+		*y = 0;
+		return;
+	}
 
-	if (deadzoneX > 0)
-		leftStickX *= 1 / (1 - deadzoneX);
-	if (deadzoneY > 0)
-		leftStickY *= 1 / (1 - deadzoneY);
- 
-	float normRX = fmaxf(-1, (float)pos_right.dx / 32768);
-	float normRY = fmaxf(-1, (float)pos_right.dy / 32768);
+	const float maximum = 32767.0f;
+	float analog_x = *x;
+	float analog_y = *y;
+	float dead_zone = deadzone * maximum;
 
-	rightStickX = (abs(normRX) < deadzoneX ? 0 : (abs(normRX) - deadzoneX) * (normRX / abs(normRX)));
-	rightStickY = (abs(normRY) < deadzoneY ? 0 : (abs(normRY) - deadzoneY) * (normRY / abs(normRY)));
+	float magnitude = sqrtf(analog_x * analog_x + analog_y * analog_y);
+	if (magnitude >= dead_zone) {
+		// find scaled axis values with magnitudes between zero and maximum
+		float scalingFactor = 1.0 / magnitude * (magnitude - dead_zone) / (maximum - dead_zone);
+		analog_x = (analog_x * scalingFactor);
+		analog_y = (analog_y * scalingFactor);
 
-	if (deadzoneX > 0)
-		rightStickX *= 1 / (1 - deadzoneX);
-	if (deadzoneY > 0)
-		rightStickY *= 1 / (1 - deadzoneY);
- 
-	// right joystick
-	if (rightStickX > 0.05 || rightStickY > 0.05 || rightStickX < -0.05 || rightStickY < -0.05) {
+		// clamp to ensure results will never exceed the max_axis value
+		float clamping_factor = 1.0f;
+		float abs_analog_x = fabs(analog_x);
+		float abs_analog_y = fabs(analog_y);
+		if (abs_analog_x > 1.0 || abs_analog_y > 1.0){
+			if (abs_analog_x > abs_analog_y) {
+				clamping_factor = 1 / abs_analog_x;
+			} else {
+				clamping_factor = 1 / abs_analog_y;
+			}
+		}
+		*x = (clamping_factor * analog_x);
+		*y = (clamping_factor * analog_y);
+	} else {
+		*x = 0;
+		*y = 0;
+	}
+}
+
+static void HandleJoystickAxes()
+{
+	// deadzone is handled in ScaleJoystickAxes() already
+	if (rightStickX != 0 || rightStickY != 0) {
+		// right joystick
 		if (automapflag) { // move map
-			if (rightStickY < 0.05)
+			if (rightStickY < -0.5)
 				AutomapUp();
-			else if (rightStickY > 0.05)
+			else if (rightStickY > 0.5)
 				AutomapDown();
-			else if (rightStickX < 0.05)
+			else if (rightStickX < -0.5)
 				AutomapRight();
-			else if (rightStickX > 0.05)
+			else if (rightStickX > 0.5)
 				AutomapLeft();
 		} else { // move cursor
 			if (pcurs == CURSOR_NONE) {
@@ -526,16 +572,12 @@ void PollSwitchStick()
 				newCurHidden = false;
 			}
 
-			static int hiresDX = 0;   // keep track of X sub-pixel per frame mouse motion
-			static int hiresDY = 0;   // keep track of Y sub-pixel per frame mouse motion
-			const int slowdown = 128; // increase/decrease this to decrease/increase mouse speed
+			const int slowdown = 80; // increase/decrease this to decrease/increase mouse speed
 
 			int x = MouseX;
 			int y = MouseY;
-			if (rightStickX > 0.05 || rightStickX < 0.05)
-				hiresDX += rightStickX * 256.0;
-			if (rightStickY > 0.05 || rightStickY < 0.05)
-				hiresDY += rightStickY * 256.0;
+			hiresDX += rightStickX * 256.0;
+			hiresDY += rightStickY * 256.0;
 
 			x += hiresDX / slowdown;
 			y += -(hiresDY) / slowdown;
@@ -553,6 +595,5 @@ void PollSwitchStick()
 			MouseY = y;
 		}
 	} 
-  
 }
 }

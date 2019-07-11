@@ -1,6 +1,3 @@
-#if defined(SWITCH)
-	#include <switch.h>
-#endif
 #include <cstdio>
 #include <set>
 #include <string>
