@@ -20,7 +20,7 @@
 - ZR : Drink Mana Potion
 - ZL : Drink Heal Potion
 - Left Analog Click : Quest Log
-- Right Analog Click : Left mouse click
+- Right Analog Click : Left mouse click (skip intro etc.)
 - Minus : Automap
 - Plus : Game Menu
 
