@@ -207,11 +207,9 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 					SetCursor_(CURSOR_HAND);
 					newCurHidden = false;
 				}
-				if (spselflag) {
-					SetSpell();
-				} else {
-					LeftMouseCmd(false);
-				}
+				lpMsg->message = DVL_WM_LBUTTONDOWN;
+				lpMsg->lParam = (MouseY << 16) | (MouseX & 0xFFFF);
+				lpMsg->wParam = keystate_for_mouse(DVL_MK_LBUTTON);
 				break;
 			case  6:	// L
 				PressChar('h');
@@ -311,6 +309,11 @@ WINBOOL PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilter
 					lpMsg->lParam = (MouseY << 16) | (MouseX & 0xFFFF);
 					lpMsg->wParam = keystate_for_mouse(0);
 				}
+				break;
+			case  5:	// right joystick click
+				lpMsg->message = DVL_WM_LBUTTONUP;
+				lpMsg->lParam = (MouseY << 16) | (MouseX & 0xFFFF);
+				lpMsg->wParam = keystate_for_mouse(0);
 				break;
 		}
 		#endif
