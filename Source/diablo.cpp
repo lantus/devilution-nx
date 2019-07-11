@@ -69,8 +69,6 @@ char *spszMsgTbl[4] = {
 };                                                      // weak
 char *spszMsgKeyTbl[4] = { "F9", "F10", "F11", "F12" }; // weak
 
-extern void PollSwitchStick();
-
 void FreeGameMem()
 {
 	music_stop();
