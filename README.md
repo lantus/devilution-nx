@@ -6,7 +6,7 @@
 - Extract contents of diablo-nx.zip release into SDMC:\switch\diablo-nx
 - Copy DIABDAT.MPQ from original Diablo game disc or GOG version.
 - Launch diablo-nx.nro
-  - *Note:* If using SX OS, hold R on any installed game and launch it.
+- *Note:* Hold R on any installed game and launch it. Do not use photo-album to launch. If you use photo-album, the homebrew only has very little memory available, and the touch keyboard doesn't work. This is true for all homebrew, not just Diablo-NX.
 - Enjoy :)
 
 ### Joycon Controls
