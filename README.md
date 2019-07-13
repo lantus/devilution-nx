@@ -9,7 +9,7 @@
   - *Note:* If using SX OS, hold R on any installed game and launch it.
 - Enjoy :)
 
-### Controls
+### Joycon Controls
 
 - Left Analog : Move Hero
 - Right Analog : Simulate Mouse
@@ -24,6 +24,14 @@
 - Right Analog Click : Left mouse click
 - Minus : Automap
 - Plus : Game Menu, Skip Intro
+
+### Touch Controls
+
+- Single finger drag : move the mouse pointer (pointer jumps to finger)
+- Single short tap : left mouse click
+- Single short tap while holding a second finger down : right mouse click
+- Dual finger drag : drag'n'drop (left mouse button is held down)
+- Three finger drag : drag'n'drop (right mouse button is held down)
 
 ### Notes
 
@@ -53,6 +61,8 @@ There are lots of bugs. Check issues on the code repo.
 ### Credits
 - Reverse engineered by GalaXyHaXz in 2018
 - Switch Port by MVG in 2019
+- Control Improvements and bug fixes for Switch Port by rsn8887 in 2019
+- Control Improvements and bug fixes for Switch Port by erfg12 in 2019
 - Controller code by Jacob Fliss
 - RetroArch team for the Switch mman.h file
 - [sanctuary](https://github.com/sanctuary) - extensively documenting Diablo's game engine
