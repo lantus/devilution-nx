@@ -227,6 +227,13 @@ bool UiFocusNavigation(SDL_Event *event)
 				return true;
 			}			 
 		}
+
+		if (event->jbutton.which == 0) {
+			if (event->jbutton.button == 1) {
+				UiFocusNavigationEsc();
+				return true;
+			}
+		}
 		 
 		if (event->jbutton.which == 0) {
 			if (event->jbutton.button == 13){
