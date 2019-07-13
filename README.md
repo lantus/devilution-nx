@@ -6,6 +6,7 @@
 - Extract contents of diablo-nx.zip release into SDMC:\switch\diablo-nx
 - Copy DIABDAT.MPQ from original Diablo game disc or GOG version.
 - Launch diablo-nx.nro
+  - *Note:* If using SX OS, hold R on any installed game and launch it.
 - Enjoy :)
 
 ### Controls
@@ -36,7 +37,6 @@ There are lots of bugs. Check issues on the code repo.
 ### Compiling On Windows
 
 - Install [devkitpro](https://sourceforge.net/projects/devkitpro/)
-- Make the folders ```obj```, ```release``` and ```RomFS``` in devilution source code folder.
 - Open ```Start Button > DevKitPro > MSys2```
 - Type in ```pacman -S switch-freetype switch-mesa switch-glad switch-glm switch-sdl2 switch-sdl2_ttf switch-sdl2_mixer switch-libvorbis switch-libmikmod```
 - Type in ```make```
