@@ -13,10 +13,10 @@
 
 - Left Analog : Move Hero
 - Right Analog : Simulate Mouse
-- B : Attack nearby enemies, talk to towns people and merchants. Pickup & Drop items in inventory. Cancel in Menu
+- B : Attack nearby enemies, talk to towns people and merchants. Pickup & Drop items in inventory. OK in Menu
 - Y : Pickup gold, potions & equipment from ground, open chests and doors that are nearby. Use item when in inventory (read books etc.).
 - X : Cast Spell
-- A : Select Spell, OK in Menu
+- A : Select Spell, Cancel in Menu
 - R : Inventory
 - L : Character
 - ZR : Drink Mana Potion
