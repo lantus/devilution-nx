@@ -62,9 +62,8 @@ There are lots of bugs. Check issues on the code repo.
 ### Credits
 - Reverse engineered by GalaXyHaXz in 2018
 - Switch Port by MVG in 2019
-- Control Improvements and bug fixes for Switch Port by rsn8887 in 2019
-- Control Improvements and bug fixes for Switch Port by erfg12 in 2019
-- Controller code by Jacob Fliss
+- Control Improvements and bug fixes for Switch Port by [rsn8887](https://github.com/rsn8887) in 2019
+- Controller code by [Jacob Fliss](https://github.com/erfg12)
 - RetroArch team for the Switch mman.h file
 - [sanctuary](https://github.com/sanctuary) - extensively documenting Diablo's game engine
 - [BWAPI Team](https://github.com/bwapi) - providing library API to work with Storm
