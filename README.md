@@ -6,24 +6,33 @@
 - Extract contents of diablo-nx.zip release into SDMC:\switch\diablo-nx
 - Copy DIABDAT.MPQ from original Diablo game disc or GOG version.
 - Launch diablo-nx.nro
-  - *Note:* If using SX OS, hold R on any installed game and launch it.
+- *Note:* Hold R on any installed game and launch it. Do not use photo-album to launch. If you use photo-album, the homebrew only has very little memory available, and the touch keyboard doesn't work. This is true for all homebrew, not just Diablo-NX.
 - Enjoy :)
 
-### Controls
+### Joycon Controls
 
 - Left Analog : Move Hero
 - Right Analog : Simulate Mouse
-- B : Attack nearby enemies, talk to towns people and merchants. Pickup & Drop items in inventory.
+- B : Attack nearby enemies, talk to towns people and merchants. Pickup & Drop items in inventory. OK in Menu
 - Y : Pickup gold, potions & equipment from ground, open chests and doors that are nearby. Use item when in inventory (read books etc.).
-- X : Cast Spell, Previous Menu
-- A : Inventory
-- R : Character
+- X : Cast Spell
+- A : Select Spell, Cancel in Menu
+- R : Inventory
+- L : Character
 - ZR : Drink Mana Potion
 - ZL : Drink Heal Potion
 - Left Analog Click : Quest Log
 - Right Analog Click : Left mouse click
 - Minus : Automap
 - Plus : Game Menu, Skip Intro
+
+### Touch Controls
+
+- Single finger drag : move the mouse pointer (pointer jumps to finger)
+- Single short tap : left mouse click
+- Single short tap while holding a second finger down : right mouse click
+- Dual finger drag : drag'n'drop (left mouse button is held down)
+- Three finger drag : drag'n'drop (right mouse button is held down)
 
 ### Notes
 
@@ -53,7 +62,8 @@ There are lots of bugs. Check issues on the code repo.
 ### Credits
 - Reverse engineered by GalaXyHaXz in 2018
 - Switch Port by MVG in 2019
-- Controller code by Jacob Fliss
+- Control Improvements and bug fixes for Switch Port by [rsn8887](https://github.com/rsn8887) in 2019
+- Controller code by [Jacob Fliss](https://github.com/erfg12)
 - RetroArch team for the Switch mman.h file
 - [sanctuary](https://github.com/sanctuary) - extensively documenting Diablo's game engine
 - [BWAPI Team](https://github.com/bwapi) - providing library API to work with Storm

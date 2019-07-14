@@ -21,7 +21,11 @@ void UiMainMenuSelect(int value)
 
 void mainmenu_Esc()
 {
+#ifdef SWITCH
+	return;
+#else
 	UiMainMenuSelect(MAINMENU_EXIT_DIABLO);
+#endif
 }
 
 void mainmenu_Load(char *name, void(*fnSound)(char *file))

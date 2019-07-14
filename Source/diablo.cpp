@@ -114,7 +114,6 @@ BOOL StartGame(BOOL bNewGame, BOOL bSinglePlayer)
 		else
 			uMsg = WM_DIABLOADGAME;
 		 
-		inmainmenu = false;		 
 		run_game_loop(uMsg);	
 		NetClose();
 	
@@ -464,9 +463,10 @@ void diablo_parse_flags(char *args)
 			case 'w':
 				debug_mode_key_w = 1;
 				break;
-			//case 'x': // JAKE: Removed for spell casting
-			//	fullscreen = FALSE;
-			//	break;
+			case 'x':
+				fullscreen = 0;
+				break;
+			}
 #endif
 		}
 	}
@@ -1420,12 +1420,8 @@ void PressChar(int vkey)
 		// JAKE: Spacebar used to go back, now Z goes back.
 		if (pcurs >= CURSOR_FIRSTITEM && invflag)
 			DropItemBeforeTrig();
-		ticks = GetTickCount();
-		if (ticks - castwait < 300 || ticks - talkwait < 600) { // prevent double spell cast
-			return;
-		}
-		castwait = ticks;
-		if (!invflag && !talkflag && !inmainmenu && stextflag == 0 && !qtextflag) // prevent "spell not rdy" speech
+		//castwait = ticks;
+		if (!invflag && !talkflag)
 			RightMouseDown();
 		PressEscKey();
 		return;
