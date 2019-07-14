@@ -114,7 +114,6 @@ BOOL StartGame(BOOL bNewGame, BOOL bSinglePlayer)
 		else
 			uMsg = WM_DIABLOADGAME;
 		 
-		inmainmenu = false;		 
 		run_game_loop(uMsg);	
 		NetClose();
 	
