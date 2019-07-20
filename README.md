@@ -53,9 +53,11 @@ There are lots of bugs. Check issues on the code repo.
 ### Compiling On MacOS
 
 - Install [devkitpro](https://devkitpro.org/wiki/Getting_Started#macOS)
-- Open Terminal
-- Type in ```dkp-pacman -S switch-freetype switch-mesa switch-glad switch-glm switch-sdl2 switch-sdl2_ttf switch-sdl2_mixer switch-libvorbis switch-libmikmod```
-- Type in ```make```
+- Open Terminal and run the following commands:
+- ```dkp-pacman -S switch-dev``` to install more build tools
+   - At a minimum, you will need to install `devkitA64` and `switch-tools`
+- ```dkp-pacman -S switch-freetype switch-mesa switch-glad switch-glm switch-sdl2 switch-sdl2_ttf switch-sdl2_mixer switch-libvorbis switch-libmikmod```
+- ```make```
 
 - .nro lives in release. Test with an emulator (RyuJinx) or real hardware.
 
